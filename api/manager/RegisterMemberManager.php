@@ -3,12 +3,12 @@
 echo "123";
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once  __DIR__ . '/../models/Member.php';
-////// tout
+
 class RegisterMemberManager{
     private DataBaseManager $manager;
 
 
-    public function __construct( $manager)
+    public function __construct($manager)
     {
         $this->manager = $manager;
     }
@@ -26,10 +26,8 @@ class RegisterMemberManager{
         return  $ma_date + ($decalage * 3600 * 24);
     }
 
-    public function register($lastName, $firstName, $email, $birthDate, $login, $license, $password, $confirmPassword, $memberOutside, $clubOutside){
-echo "ouiiii";
+    public function register($lastName, $firstName, $birthDate, $memberOutside, $clubOutside, $license, $email, $login, $password, $confirmPassword){
 
-      //  $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password) VALUES ('aa','bb', 'b@b', 'a1', 'aaaaa')');
         $error = new ArrayObject();
         if ($this->ifExist($email)){
             $error->append("emailExist");
@@ -66,38 +64,38 @@ echo "ouiiii";
             $error->append("passwordError");
         }
 
-        if (strcmp($password, $confirmPass) !== 0){
+        if (strcmp($password, $confirmPassword) !== 0){
             $error->append("confirmPasswordError");
         }
 
         if (count($error) == 0) {
             $passwordSha = hash('sha256', $password);
-//            $verifemail = $this->getRandomStr(6);
 
             $error->append($lastName);
             $error->append($firstName);
             $error->append($email);
             $error->append($birthDate);
             $error->append($password);
-//            $error->append($verifemail);
 
-/*
-            $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password) VALUES (?,?,?,?,?)', [
+
+            $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password, type) VALUES (?,?,?,?,?,?)', [
                 (string)$lastName,
                 (string)$firstName,
                 (string)$email,
                 (string)$login,
-                (string)$passwordSha
+                (string)$passwordSha,
+                2
             ]);
-*/
+
             $newId = $this->manager->getLastInsertId();
 
-            $this->manager->exec('INSERT INTO member (birthDate, memberOutside, clubOutside, license, id_person) VALUES (?,?,?,?)', [
-                $birthDate,
-                $memberOutside,
-                $clubOutside,
-                $newId
-            ]);
+            $this->manager->exec('INSERT INTO member (birthDate, memberOutside, clubOutside, license, idUser) VALUES (?,?,?,?,?)', [
+                  $birthDate,
+                  $memberOutside,
+                  $clubOutside,
+                  $license,
+                  $newId
+              ]);
 
             return "ok";
         }else{

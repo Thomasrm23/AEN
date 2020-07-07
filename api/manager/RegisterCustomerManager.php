@@ -26,15 +26,63 @@ class RegisterCustomerManager{
         return  $ma_date + ($decalage * 3600 * 24);
     }
 
-    public function register($lastName){
+    public function register($lastName, $firstName, $email, $country, $login, $password, $confirmPassword){
 
-        echo "fctttt";
+        $error = new ArrayObject();
 
-        $this->manager->exec('INSERT INTO user (lastName) VALUES (?)',[$lastName]);
+        if (!ctype_alpha($lastName)){
+            $error->append("lastNameError");
+
+        if (!ctype_alpha($firstName)){
+            $error->append("firstNameError");
+        }
+        if ($this->ifExist($email)){
+            $error->append("emailExist");
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $error->append("emailError");
+        }
+
+        if (preg_match('/\A(?=[\x20-\x7E]*?[A-Z])(?=[\x20-\x7E]*?[a-z])(?=[\x20-\x7E]*?[0-9])[\x20-\x7E]{6,}\z/', $password) != 1){
+            $error->append("passwordError");
+        }
+
+        if (strcmp($password, $confirmPassword) !== 0){
+            $error->append("confirmPasswordError");
+        }
 
 
+
+        }
+        if (count($error) == 0) {
+          $passwordSha = hash('sha256', $password);
+
+          $error->append($lastName);
+          $error->append($firstName);
+          $error->append($email);
+          $error->append($login);
+          $error->append($password);
+
+
+          $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password, type) VALUES (?,?,?,?,?,?)',[
+            $lastName,
+            $firstName,
+            $email,
+            $login,
+            $passwordSha,
+            1
+          ]);
+
+          $newId = $this->manager->getLastInsertId();
+
+          $this->manager->exec('INSERT INTO customer (idCountry, idUser) VALUES (?,?)', [
+              $country,
+              $newId
+          ]);
 
             return "ok";
+        }
 
     }
 
@@ -50,5 +98,9 @@ class RegisterCustomerManager{
         return $randomString;
     }
 
+    public function getCountry(){
+        $found = $this->manager->getAll('SELECT * from country');
+        return $found;
+    }
 
 }

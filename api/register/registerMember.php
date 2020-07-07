@@ -3,18 +3,19 @@
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once __DIR__ . '/../manager/RegisterMemberManager.php';
 
-//    header("Access-Control-Allow-Origin: *");
-//    header('Content-type: application/json');
+    header("Access-Control-Allow-Origin: *");
+    header('Content-type: application/json');
 
-//echo var_dump($_POST['data']);
 $json = json_decode($_POST['data'], true);
 
 if (isset($json['lastName']) &&
     isset($json['firstName']) &&
     isset($json['birthDate']) &&
+    isset($json['memberOutside']) &&
+    isset($json['clubOutside']) &&
+    isset($json['license']) &&
     isset($json['email']) &&
     isset($json['login']) &&
-    isset($json['license']) &&
     isset($json['password']) &&
     isset($json['confirmPassword'])){
 
@@ -24,13 +25,13 @@ if (isset($json['lastName']) &&
     $result = $registerMember->register($json['lastName'],
         $json['firstName'],
         $json['birthDate'],
+        $json['memberOutside'],
+        $json['clubOutside'],
+        $json['license'],
         $json['email'],
         $json['login'],
-        $json['license'],
         $json['password'],
-        $json['confirmPassword'],
-        $json['memberOutside'],
-        $json['clubOutside']);
+        $json['confirmPassword']);
 
     if($result == "ok"){
         http_response_code(200);
@@ -44,5 +45,3 @@ if (isset($json['lastName']) &&
 http_response_code(400);
 echo "empty";
 die();
-
-

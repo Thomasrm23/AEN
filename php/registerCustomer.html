@@ -55,7 +55,21 @@
 							<div class="col-lg-6 form-group">
 
 								<input name="lastName" placeholder="Nom" id="lastName" class="common-input mb-20 form-control" required="" type="text">
+                <input name="firstName" placeholder="Prénom" id="firstName" class="common-input mb-20 form-control" required="" type="text">
 
+                <input name="email" placeholder="Adresse mail" id="email" class="common-input mb-20 form-control" required="" type="email">
+
+                <!-- <input name="country" placeholder="Pays" id="country" class="common-input mb-20 form-control" required="" type="number"> -->
+<div >
+                <select type="text" class="common-input mb-20 form-control" name="country" id="country">
+                  <option value=""> </option>
+                </select>
+</div>
+                <input name="login" placeholder="Nom d'utilisateur" id="login" class="common-input mb-20 form-control" required="" type="text">
+
+                <input name="password" placeholder="Mot de passe" id="password" class="common-input mb-20 form-control" required="" type="password">
+
+                <input name="confirmPassword" placeholder="Confirmation de mot de passe" id="confirmPassword" class="common-input mb-20 form-control" required="" type="password">
 
 							</div>
 
@@ -111,16 +125,51 @@
 	</script>
 
 	<script type="text/javascript">
+  window.onload = function() {
+
+
+              var option = {
+                url: 'http://localhost/AEN/api/register/getCountry.php',
+                  dataType: "text",
+                  type: "POST",
+                  data: {},
+                  success: function(data, status, xhr){
+                      let countryList = JSON.parse(xhr.responseText);
+                      let optionElement;
+                      for ( let i = 0; i < countryList.length; i++){
+                          optionElement = document.createElement("option");
+                          optionElement.setAttribute( "value", countryList[i]['idCountry']);
+                          optionElement.innerHTML = countryList[i]['nameFr'];
+                  //        console.log(countryList[i]['jobs']);
+                          $('#country').append(optionElement);
+                      }
+                    //  console.log();
+                  },
+                  error: function( xhr, status, error ){
+
+                  }
+              };
+              $.ajax(option);
+          };
+
+
 
 		function validateRegistration(){
 
 			var data1 = {
 				lastName: $('#lastName').val(),
+        firstName: $('#firstName').val(),
+        email: $('#email').val(),
+        country: $('#country').val(),
+        login: $('#login').val(),
+        password: $('#password').val(),
+        confirmPassword: $('#confirmPassword').val()
 			};
 
 
 			console.log("custooo");
       console.log("nothing");
+      console.log("commmmit");
 
 
 			var option = {
@@ -130,22 +179,37 @@
 				data: {data: JSON.stringify(data1)},
 				success: function(data, status, xhr){
           console.log( JSON.stringify(data1));
+        //  console.log("ez");
         //  print_r(data: JSON.stringify(data));
           //echo(data: JSON.stringify(data));
 					//window.location.replace("http://localhost/AEN/php/index.php");
 				},
-				error: function(xhr, status, error){;
-					if(xhr.status == 402){
+				error: function(xhr, status, error){
+          //console.log(error);
+    //      ;
+        //  if(xhr.status != 200){
+          //  if(xhr.status == 402){
 						console.log(xhr.responseText);
 						showError(JSON.parse(xhr.responseText));
-					}
+		//			}
 
 				}
 			};
 
 		$.ajax(option);
 		}
-/*
+
+
+    		function showError(error){
+        	for(let i = 0; i < Object.keys(error).length; i++){
+        		switch(error[i]){
+    				case 'lastNameError':
+    					$('#lastNameError').show();
+    					break;
+          	}
+      	  }
+      	}
+
 
 		function showError(error){
     	for(let i = 0; i < Object.keys(error).length; i++){
@@ -162,13 +226,7 @@
 				case 'emailExist':
 					$('#emailExist').show();
 					break;
-				case 'dateError':
-					$('#errorDate').show();
-					break;
-				case 'tooYoung':
-					$('#tooYoung').show();
-					break;
-				case 'passwordError':
+			  case 'passwordError':
 					$('#passwordError').show();
 					break;
 				case 'confirmPasswordError':
@@ -177,7 +235,7 @@
 			}
 		}
 	}
-*/
+
 	</script>
 
 </body>

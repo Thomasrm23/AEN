@@ -12,7 +12,7 @@ class AccountManager{
         $this->manager = $manager;
     }
 
-    public function log($mail, $password){
+    public function log($email, $password){
         $passSha = hash("sha256", $password);
         $result = $this->manager->find("SELECT idUser, type FROM user WHERE email = ? AND password = ?", [$mail, $passSha]);
 
@@ -48,4 +48,3 @@ class AccountManager{
 
 
 }
-
