@@ -12,11 +12,11 @@ class AccountManager{
         $this->manager = $manager;
     }
 
-    public function log($email, $password){
+    public function log($login, $password){
         $passSha = hash("sha256", $password);
-        $result = $this->manager->find("SELECT idUser, type FROM user WHERE email = ? AND password = ?", [$mail, $passSha]);
+        $result = $this->manager->find("SELECT idUser FROM user WHERE login = ? AND password = ?", [$login, $passSha]);
 
-        if ($result['idUser'] ){
+        if ($result['idUser']){
             $token = bin2hex(random_bytes(32));
             $affectedRows = $this->manager->exec('UPDATE user SET token = ? WHERE idUser = ?', [
                 $token,
@@ -42,9 +42,19 @@ class AccountManager{
         }
     }
 
-    function getIdFromToken($token){
+		function getIdFromToken($token){
          return $this->manager->find("SELECT idUser FROM user WHERE token = ?", [$token])['idUser'];
     }
+
+		function getIdMemberFromToken($token){
+				 return $this->manager->find("SELECT idMember FROM member INNER JOIN user ON user.idUser = member.idUser where token = ?", [$token]);//['idUser'];
+		}
+
+		public function getTypeFromToken($token){
+		    $result = $this->manager->find("SELECT type FROM user INNER JOIN member ON user.idUser = member.idUser where token = ?", [$token]);
+				return $result;
+		}
+
 
 
 }

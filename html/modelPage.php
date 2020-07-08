@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-	
+
 	<title>AEN</title>
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700" rel="stylesheet">
-	
+
 	<link rel="stylesheet" href="../css/linearicons.css">
 	<link rel="stylesheet" href="../css/font-awesome.min.css">
 	<link rel="stylesheet" href="../css/bootstrap.css">
@@ -28,7 +28,7 @@
 <body>
 
 	<header id="header">
-			
+
 	</header>
 
 	<section class="banner-area relative about-banner" id="home">
@@ -41,17 +41,19 @@
 						Current Page
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="currentpage.php"> 
+						<span class="lnr lnr-arrow-right"></span> <a href="currentpage.php">
 							Current page</a></p>
 				</div>
 			</div>
 		</div>
 	</section>
-	
+
 
 	<section class="contact-page-area section-gap">
 		<div class="container">
-
+      <?php
+      echo date('Y-m-d H:i:s') ;
+      ?>
 
 <!-- 	here is the code in the body -->
 
@@ -60,15 +62,15 @@
 
 
 	<footer>
-		
+
 	</footer>
 
 	<script src="../jquery/jquery-3.2.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
 	 crossorigin="anonymous"></script>
 	<script src="../js/vendor/bootstrap.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>		
-	
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+
 	<script src="../js/easing.min.js"></script>
 	<script src="../js/hoverIntent.js"></script>
 	<script src="../js/superfish.min.js"></script>
@@ -86,7 +88,3 @@
 
 </body>
 </html>
-
-
-
-		

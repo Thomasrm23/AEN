@@ -37,11 +37,11 @@
 			<div class="row d-flex align-items-center justify-content-center">
 				<div class="about-content col-lg-12">
 					<h1>
-						Inscription
+						Inscription Membre
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="contact.html">
-							Inscription</a></p>
+						<span class="lnr lnr-arrow-right"></span> <a href="registerMember.html">
+							Inscription Membre</a></p>
 				</div>
 			</div>
 		</div>
@@ -59,9 +59,9 @@
                 <input name="birthDate" placeholder="Date de naissance" id="birthDate" class="common-input mb-20 form-control" required="" type="date">
 
                 <div class="common-input mb-20 form-control" style="text-align:left">
-                <label class="common-input mb-20 form-control">"Membre d'un autre club ?"</label>
-                <input name="memberOutside" placeholder="" id="memberOutside" class="common-input mb-20 form-control" type="checkbox"
-                value="0" onclick="if (this.checked) this.value=1; else this.value=0;">
+                  <input name="memberOutside" placeholder="" id="memberOutside" class="common-input mb-20 form-control" type="checkbox"
+                  value="0" onclick="if (this.checked) this.value=1; else this.value=0;">
+                  <label class="common-input mb-20 form-control">"Membre d'un autre club ?"</label>
                 </div>
 
                 <input name="clubOutside" placeholder="Nom du Club" id="clubOutside" class="common-input mb-20 form-control" type="text">
@@ -106,13 +106,16 @@
 	<script src="../js/owl.carousel.min.js"></script>
  	<script src="../js/main.js"></script>
 
+  <script src="../js/isCo.js">
 
+  </script>
+<!--
 	<script>
 		isCo();
 		function isCo(){
 
 		    let option = {
-		        url: 'http://localhost/AEN/api/session/isCo.php',
+		        url: '../api/session/isCo.php',
 		        dataType: 'text',
 		        type: "POST",
 		        success: function(data, status, xhr){
@@ -125,7 +128,7 @@
 
 		    $.ajax(option);
 		}
-	</script>
+	</script> -->
 
 	<script type="text/javascript">
 
@@ -147,7 +150,7 @@
 
 
 			var option = {
-				url: 'http://localhost/AEN/api/register/registerMember.php',
+				url: '../api/register/registerMember.php',
 				dataType: 'text',
 				type: "POST",
 				data: {data: JSON.stringify(data1)},

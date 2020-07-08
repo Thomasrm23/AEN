@@ -37,11 +37,11 @@
 			<div class="row d-flex align-items-center justify-content-center">
 				<div class="about-content col-lg-12">
 					<h1>
-						Inscription
+						Inscription Client
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="contact.html">
-							Inscription</a></p>
+						<span class="lnr lnr-arrow-right"></span> <a href="registerCustomer.html">
+							Inscription Client</a></p>
 				</div>
 			</div>
 		</div>
@@ -59,12 +59,11 @@
 
                 <input name="email" placeholder="Adresse mail" id="email" class="common-input mb-20 form-control" required="" type="email">
 
-                <!-- <input name="country" placeholder="Pays" id="country" class="common-input mb-20 form-control" required="" type="number"> -->
-<div >
-                <select type="text" class="common-input mb-20 form-control" name="country" id="country">
-                  <option value=""> </option>
-                </select>
-</div>
+                <div >
+                  <select type="text" class="common-input mb-20 form-control" name="country" id="countryList">
+                    <option value="">Votre pays</option>
+                  </select>
+                </div>
                 <input name="login" placeholder="Nom d'utilisateur" id="login" class="common-input mb-20 form-control" required="" type="text">
 
                 <input name="password" placeholder="Mot de passe" id="password" class="common-input mb-20 form-control" required="" type="password">
@@ -103,13 +102,16 @@
 <!-- 	<script src="../js/mail-script.js"></script>
  -->	<script src="../js/main.js"></script>
 
+ <script src="../js/isCo.js">
 
-	<script>
+ </script>
+<!--
+  <script>
 		isCo();
 		function isCo(){
 
 		    let option = {
-		        url: 'http://localhost/AEN/api/session/isCo.php',
+		        url: '../api/session/isCo.php',
 		        dataType: 'text',
 		        type: "POST",
 		        success: function(data, status, xhr){
@@ -122,28 +124,32 @@
 
 		    $.ajax(option);
 		}
-	</script>
+	</script> -->
+
 
 	<script type="text/javascript">
   window.onload = function() {
 
 
               var option = {
-                url: 'http://localhost/AEN/api/register/getCountry.php',
+                url: '../api/register/getCountry.php',
                   dataType: "text",
                   type: "POST",
                   data: {},
                   success: function(data, status, xhr){
-                      let countryList = JSON.parse(xhr.responseText);
+                      let country = JSON.parse(xhr.responseText);
                       let optionElement;
-                      for ( let i = 0; i < countryList.length; i++){
+                      for ( let i = 0; i < country.length; i++){
                           optionElement = document.createElement("option");
-                          optionElement.setAttribute( "value", countryList[i]['idCountry']);
-                          optionElement.innerHTML = countryList[i]['nameFr'];
-                  //        console.log(countryList[i]['jobs']);
-                          $('#country').append(optionElement);
+                          optionElement.setAttribute( "value", country[i]['idCountry']);
+                          optionElement.innerHTML = country[i]['nameFr'];
+                  //        console.log(country[i]['jobs']);
+                          $('#countryList').append(optionElement);
+                          console.log(country);
+                          console.log(country[i]['nameFr']);
+
                       }
-                    //  console.log();
+                      console.log();
                   },
                   error: function( xhr, status, error ){
 
@@ -160,7 +166,7 @@
 				lastName: $('#lastName').val(),
         firstName: $('#firstName').val(),
         email: $('#email').val(),
-        country: $('#country').val(),
+        country: $('#countryList').val(),
         login: $('#login').val(),
         password: $('#password').val(),
         confirmPassword: $('#confirmPassword').val()
@@ -173,7 +179,7 @@
 
 
 			var option = {
-				url: 'http://localhost/AEN/api/register/registerCustomer.php',
+				url: '../api/register/registerCustomer.php',
 				dataType: 'text',
 				type: "POST",
 				data: {data: JSON.stringify(data1)},
@@ -182,7 +188,6 @@
         //  console.log("ez");
         //  print_r(data: JSON.stringify(data));
           //echo(data: JSON.stringify(data));
-					//window.location.replace("http://localhost/AEN/php/index.php");
 				},
 				error: function(xhr, status, error){
           //console.log(error);
@@ -192,23 +197,12 @@
 						console.log(xhr.responseText);
 						showError(JSON.parse(xhr.responseText));
 		//			}
-
 				}
 			};
 
 		$.ajax(option);
 		}
 
-
-    		function showError(error){
-        	for(let i = 0; i < Object.keys(error).length; i++){
-        		switch(error[i]){
-    				case 'lastNameError':
-    					$('#lastNameError').show();
-    					break;
-          	}
-      	  }
-      	}
 
 
 		function showError(error){

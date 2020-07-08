@@ -2,7 +2,7 @@ isCo();
 function isCo(){
 
     let option = {
-        url: 'http://localhost/AEN/api/session/isCo.php',
+        url: '../api/session/isCo.php',
         dataType: 'text',
         type: "POST",
         success: function(data, status, xhr){
@@ -18,7 +18,7 @@ function isCo(){
 
 function deco() {
     let option = {
-        url: 'http://localhost/AEN/api/session/deco.php',
+        url: '../api/session/deco.php',
         dataType: 'text',
         type: "POST",
         success: function (data, status, xhr) {
@@ -30,4 +30,3 @@ function deco() {
 
     $.ajax(option);
 }
-

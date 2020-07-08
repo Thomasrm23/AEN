@@ -1,6 +1,5 @@
 <?php
 
-echo "123";
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once  __DIR__ . '/../models/Member.php';
 

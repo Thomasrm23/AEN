@@ -16,10 +16,10 @@ class Member extends User{
     	parent::__construct($firstName, $lastName, $email, $login, $password, $confirmPassword, $token, $type);
 
     	$this->manager = new DataBaseManager();
-        $this->birthDate = $birthDate;
-        $this->memberOutside = $memberOutside;
-        $this->license = $license;
-        $this->clubOutside = $clubOutside;
+      $this->birthDate = $birthDate;
+      $this->memberOutside = $memberOutside;
+      $this->license = $license;
+      $this->clubOutside = $clubOutside;
 
     }
 
@@ -30,4 +30,3 @@ class Member extends User{
 
 
 }
-
