@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+	<title>AEN</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700" rel="stylesheet">
+
+	<link rel="stylesheet" href="../css/linearicons.css">
+	<link rel="stylesheet" href="../css/font-awesome.min.css">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<link rel="stylesheet" href="../css/magnific-popup.css">
+	<link rel="stylesheet" href="../css/nice-select.css">
+	<link rel="stylesheet" href="../css/animate.min.css">
+	<link rel="stylesheet" href="../css/owl.carousel.css">
+	<link rel="stylesheet" href="../css/jquery-ui.css">
+	<link rel="stylesheet" href="../css/main.css">
+
+	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+
+</head>
+<body>
+
+	<header id="header">
+
+	</header>
+	<section class="banner-area relative about-banner" id="home">
+		<img class="cta-img img-fluid" src="img/cta-img.png" alt="">
+		<div class="overlay overlay-bg"></div>
+		<div class="container">
+			<div class="row d-flex align-items-center justify-content-center">
+				<div class="about-content col-lg-12">
+					<h1>
+						Consulter ses activités
+					</h1>
+					<p class="link-nav"><a href="index.html">Accueil </a>
+						<span class="lnr lnr-arrow-right"></span> <a href="activityHistory.html">
+						  Consulter ses activités </a></p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="contact-page-area section-gap">
+		<div class="container">
+			<div class="row justify-content-center">
+
+        <div class="table-wrap col-lg-10">
+					<table class="schdule-table table table-bordered">
+						<thead class="thead-light">
+                <th class="head" scope="col">Date de l'activité</th>
+                <th class="head" scope="col">Activités</th>
+                <th class="head" scope="col">Utilisation</th>
+                <th class="head" scope="col">Temps en heures</th>
+								<th class="head" scope="col">Réservé</th>
+						</thead>
+						<tbody class="show-activity-hide">
+            </tbody>
+				  </table>
+			  </div>
+      </div>
+		</div>
+	</section>
+	<footer>
+
+	</footer>
+
+	<script src="../jquery/jquery-3.2.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	 crossorigin="anonymous"></script>
+	<script src="../js/vendor/bootstrap.min.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+
+	<script src="../js/easing.min.js"></script>
+	<script src="../js/hoverIntent.js"></script>
+	<script src="../js/superfish.min.js"></script>
+	<script src="../js/jquery.ajaxchimp.min.js"></script>
+	<script src="../js/jquery.magnific-popup.min.js"></script>
+	<script src="../js/jquery.tabs.min.js"></script>
+	<script src="../js/jquery.nice-select.min.js"></script>
+	<script src="../js/owl.carousel.min.js"></script>
+  <script src="../js/main.js"></script>
+
+ <script src="../js/isCo.js">
+
+ </script>
+
+	<script type="text/javascript">
+  window.onload = function go(){
+          getActivityRequest();
+};
+
+  function getActivityRequest(){
+    var allIntervention;
+
+    var options = {
+        url: "../api/activity/getActivityRequest.php",
+        dataType: "text",
+        type: "POST",
+
+        success: function( data, status, xhr){
+
+            showActivityRequest(JSON.parse(xhr.responseText));
+              },
+        error: function(xhr, status, error){
+
+        }
+    };
+    $.ajax(options);
+}
+
+function showActivityRequest(activity){
+
+    //    console.log("fct showActivityRequest");
+
+        let divHide = $('.show-activity-hide');
+        let element;
+        for(let i = 0; i < Object.keys(activity).length; i++){
+            addActivityRequest(activity[i]);
+        }
+    }
+
+//
+//     function addActivityRequest(activity){
+//     console.log(activity['dateRequested']);
+//     let  element = ' <div class="one-activity row m-t-20" id="activity-' + activity['idActivityRequest'] + '\">' +
+//     //
+//     //     ' <div class="col title-intervention" id="title-intervention-' + intervention['idIntervention'] + '" name="' + intervention['title'] + '"> <b>' + intervention["title"] + '</b></div>' +
+//     ' <div class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></div>' +
+//     ' <div class="col name-activity" id="name-activity-' + activity['name'] + '" name="' + activity['name'] + '"> <b>' + activity["name"] +'</b></div>' +
+//     ' <div class="col booked-activity" id="booked-activity-' + activity['booked'] + '" name="' + activity['booked'] + '"> <b>' + activity["booked"] +'</b></div>' +
+//         // ' <div class="col detail-intervention" id="detail-intervention-' + intervention['detail'] + '" name="' + intervention['detail'] + '"> <b>' +  " durant " + intervention["duration"] + "h"+ '</b></div>' +
+//         // ' <div class="col jobs-intervention" id="jobs-intervention-' + intervention['jobs'] + '" name="' + intervention['jobs'] + '"> <b>' + intervention["jobs"] + '</b></div>' +
+//         // ' <div class="col name-intervention" id="name-intervention-' + intervention['name'] + '" name="' + intervention['name'] + '"> <b>' + "Réalisé par M." + intervention["name"] + '</b></div>' +
+//         //
+//         //
+//         // '<a type="button" class="col intervention-accept dis-flex justify-content-end" href="../payment/payment.php" onclick="acceptIntervention(' + intervention['idIntervention'] + ')">Valider</a>' +
+//         //
+//         // '<a type="button" class="col intervention-refuse" href="InterventionHistory.php" onclick="refuseIntervention(' + intervention['idIntervention'] + ')">Annuler</a>' +
+//
+//         '</div>';
+//
+//
+//     $('.show-activity-hide').append(element);
+// }
+
+
+
+    function addActivityRequest(activity){
+    console.log(activity['dateRequested']);
+     let  element = ' <tr>' +
+     //' <th class="name" scope="row" id="activity-' + activity['idActivityRequest'] + '\">' +
+    //
+    //     ' <div class="col title-intervention" id="title-intervention-' + intervention['idIntervention'] + '" name="' + intervention['title'] + '"> <b>' + intervention["title"] + '</b></div>' +
+    ' <td class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></td>' +
+    ' <td class="col name-activity" id="name-activity-' + activity['name'] + '" name="' + activity['name'] + '"> <b>' + activity["name"] +'</b></td>' +
+    ' <td class="col utility-activity" id="utility-activity-' + activity['utility'] + '" name="' + activity['utility'] + '"> <b>' + activity["utility"] +'</b></td>' +
+    ' <td class="col nbHours-activity" id="nbHours-activity-' + activity['nbHours'] + '" name="' + activity['nbHours'] + '"> <b>' + activity["nbHours"] +'</b></td>' +
+    ' <td class="col booked-activity" id="booked-activity-' + activity['booked'] + '" name="' + activity['booked'] + '"> <b>' + activity["booked"] +'</b></td>' +
+        // ' <div class="col detail-intervention" id="detail-intervention-' + intervention['detail'] + '" name="' + intervention['detail'] + '"> <b>' +  " durant " + intervention["duration"] + "h"+ '</b></div>' +
+        // ' <div class="col jobs-intervention" id="jobs-intervention-' + intervention['jobs'] + '" name="' + intervention['jobs'] + '"> <b>' + intervention["jobs"] + '</b></div>' +
+        // ' <div class="col name-intervention" id="name-intervention-' + intervention['name'] + '" name="' + intervention['name'] + '"> <b>' + "Réalisé par M." + intervention["name"] + '</b></div>' +
+        //
+        //
+        // '<a type="button" class="col intervention-accept dis-flex justify-content-end" href="../payment/payment.php" onclick="acceptIntervention(' + intervention['idIntervention'] + ')">Valider</a>' +
+        //
+        // '<a type="button" class="col intervention-refuse" href="InterventionHistory.php" onclick="refuseIntervention(' + intervention['idIntervention'] + ')">Annuler</a>' +
+
+    //    '</th>';
+    ' </tr>'
+
+    $('.show-activity-hide').append(element);
+}
+
+	</script>
+
+</body>
+</html>

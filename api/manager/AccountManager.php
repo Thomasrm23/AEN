@@ -51,7 +51,7 @@ class AccountManager{
 		}
 
 		public function getTypeFromToken($token){
-		    $result = $this->manager->find("SELECT type FROM user INNER JOIN member ON user.idUser = member.idUser where token = ?", [$token]);
+			$result = $this->manager->find("SELECT type FROM user where token = ?", [$token]); //appeler avec crochet
 				return $result;
 		}
 

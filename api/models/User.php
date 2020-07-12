@@ -14,17 +14,17 @@ class User{
     private $type;
 
 
-    private $error = [
-        "firstName" => 0,
-        "lastName" => 0,
-        "email" => 0,
-        "login" => 0,
-        "password" => 0,
-        "confirmPassword" => 0,
-        "token" => 0,
-        "type" => 0
-
-        ];
+    // private $error = [
+    //     "firstName" => 0,
+    //     "lastName" => 0,
+    //     "email" => 0,
+    //     "login" => 0,
+    //     "password" => 0,
+    //     "confirmPassword" => 0,
+    //     "token" => 0,
+    //     "type" => 0
+		//
+    //     ];
 
     public function __construct($firstName, $lastName, $email, $login, $password, $confirmPassword, $token, $type){
 

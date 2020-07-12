@@ -40,7 +40,7 @@
             Réserver une activité
           </h1>
           <p class="link-nav"><a href="index.html">Accueil </a>
-            <span class="lnr lnr-arrow-right"></span> <a href="requestActivity.html">
+            <span class="lnr lnr-arrow-right"></span> <a href="activityRequest.html">
               Réserver une activité</a></p>
             </div>
           </div>
@@ -60,12 +60,14 @@
                       </select>
                     </div>
                     <input name="dateRequest" placeholder="Date souhaitée" id="dateRequest" class="common-input mb-20 form-control" required="" type="date">
+                    <input name="utility" placeholder="1:ecole 2:voyage" id="utility" class="common-input mb-20 form-control" required="" type="number">
+                    <input name="nbHours" placeholder="nombre d'heures" id="nbHours" class="common-input mb-20 form-control" required="" type="number">
                   </div>
 
                   <div class="col-lg-12">
                     <button onclick="validateRequest()" class="genric-btn primary" style="float: right;">Valider</button>
                   </div>
-                  <?php
+                  <!-- <?php
 //                   // PHP program to illustrate
 //                   // date_diff() function
 // $dateentre = $_POST['dateRequest'];
@@ -91,7 +93,7 @@
 //                   }
 //
 
-                  ?>
+                  ?> -->
 
                 </div>
               </form>
@@ -176,25 +178,27 @@
 
         var data1 = {
           dateRequest: $('#dateRequest').val(),
-          activity: $('#activityList').val()
+          activity: $('#activityList').val(),
+          utility: $('#utility').val(),
+          nbHours: $('#nbHours').val()
         };
 
 
 
         var option = {
-          url: '../api/activity/requestActivity.php',
+          url: '../api/activity/activityRequest.php',
           dataType: 'text',
           type: "POST",
           data: {data: JSON.stringify(data1)},
           success: function(data, status, xhr){
-            console.log( JSON.stringify(data1));
+            //console.log( JSON.stringify(data1));
           },
           error: function(xhr, status, error){
 
             if(xhr.status != 200){
-              console.log( JSON.stringify(data1));
+          //    console.log( JSON.stringify(data1));
 
-              console.log(xhr.responseText);
+          //    console.log(xhr.responseText);
               /*	showError(JSON.parse(xhr.responseText));*/
             }
 
@@ -209,7 +213,7 @@
         for(let i = 0; i < Object.keys(error).length; i++){
           switch(error[i]){
             case 'dateError':
-        $('#errorDate').show();
+        $('#dateError').show();
         break;
       case 'tooYoung':
         $('#tooYoung').show();

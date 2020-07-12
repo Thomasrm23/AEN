@@ -115,5 +115,22 @@ class RegisterMemberManager{
         return $randomString;
     }
 
+    public function getContribution($birthDate, $memberOutside){
+
+        $today = date('m-d-Y');
+        $diff = date_diff(date_create($birthDate), date_create($today));
+        $age = $diff->format('%y');
+
+        if ($age < 21 || $memberOutside == 1){
+          $typeContribution = 2;
+        }else{
+          $typeContribution = 1;
+        }
+
+        $found = $this->manager->getAll('SELECT feeContribution FROM membercontribution WHERE idMemberContribution = ?', [$typeContribution]);
+        return $found;
+
+    }
+
 
 }

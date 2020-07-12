@@ -40,11 +40,11 @@ $headerCustomer = "
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
 
-						<li><a href=\"requestService.html\">Commander un service</a></li>
-						<li><a href=\"historyService.html\">Consulter ses commandes</a></li>
+						<li><a href=\"serviceRequest.html\">Commander un service</a></li>
+						<li><a href=\"serviceHistory.html\">Consulter ses commandes</a></li>
 						<li><a href=\"accountCustomer.html\">Mon compte</a></li>
 
-						<li><a href=\"\">Deconnexion</a>
+						<li><a href=\"\" onclick=\"deco()\">Deconnexion</a>
 							<img class='nav-link' style='cursor: pointer' height='30px' width='30px' onclick='deco()' src='../../images/turn-off.png' alt=''>
 						</li>
 						<li><a href=\"index.html\">Langue</a></li>
@@ -64,12 +64,12 @@ $headerMember = "
 				<nav id=\"nav-menu-container\">
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
-						<li><a href=\"requestActivity.html\">Réserver une activité</a></li>
-						<li><a href=\"historyActivity.html\">Consulter ses activités</a></li>
+						<li><a href=\"activityRequest.html\">Réserver une activité</a></li>
+						<li><a href=\"activityHistory.html\">Consulter ses activités</a></li>
 						<li><a href=\"accountMember.html\">Mon compte</a></li>
 
-						<li><a href=\"\">Deconnexion</a>
-							<img class='nav-link' style='cursor: pointer' height='30px' width='30px' onclick='deco()' src='../../images/turn-off.png' alt=''>
+						<li><a href=\"\" onclick=\"deco()\">Deconnexion</a>
+							 <img class='nav-link' style='cursor: pointer' height='30px' width='30px' onclick='deco()' src='../../images/turn-off.png' alt=''>
 						</li>
 						<li><a href=\"index.html\">Langue</a></li>
 					</ul>
@@ -88,12 +88,12 @@ $headerAdmin = "
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
 						<li><a href=\"\">Consulter les commandes</a></li>
-						<li><a href=\"\">Consulter les activités</a></li>
+						<li><a href=\"activityHistoryAll.html\">Consulter les activités</a></li>
 						<li><a href=\"\">Consulter les membres</a></li>
 						<li><a href=\"\">Gérer les ressources</a></li>
 						<li><a href=\"\">Gérer les tables de paramétrages</a></li>
 
-						<li><a href=\"\">Deconnexion</a>
+						<li><a href=\"\" onclick=\"deco()\">Deconnexion</a>
 							<img class='nav-link' style='cursor: pointer' height='30px' width='30px' onclick='deco()' src='../../images/turn-off.png' alt=''>
 						</li>
 						<li><a href=\"index.html\">Langue</a></li>
@@ -115,6 +115,7 @@ if(isset($_SESSION['token'])){
 
 
 			switch ($type['type']){
+
 				case 1:
 					echo $headerCustomer;
 					break;
@@ -128,7 +129,7 @@ if(isset($_SESSION['token'])){
     }
     else{
         echo $header;
-        http_response_code(400);
+        http_response_code(401);
         die();
     }
 }else{

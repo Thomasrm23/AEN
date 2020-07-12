@@ -12,7 +12,7 @@ class ActivityManager{
         $this->manager = $manager;
     }
 
-    public function addActivityRequest($dateRequest, $activity, $idMember){
+    public function addActivityRequest($dateRequest, $activity, $utility, $nbHours, $idMember){
       //
        $error = new ArrayObject();
       //
@@ -30,26 +30,28 @@ class ActivityManager{
       //   $error->append($dateRequest);
 
 
-              $date = date_create($dateRequest);
-              if (checkdate($date->format('m'), $date->format('d'), $date->format('Y'))){
-                  $dateMin = date_create("01-01-1920");
-                  if($dateMin > $date){
-                      $error->append("dateError");
-                  }
-
-                  $dateMin  = $this->timestampToDate($this->getNewDate(time(), - (10 * 365) ));
-                  $dateMin = date_create($dateMin);
-                  if($dateMin < $date){
-                      $error->append("tooYoung");
-                  }
-
-              }
+              // $date = date_create($dateRequest);
+              // if (checkdate($date->format('m'), $date->format('d'), $date->format('Y'))){
+              //     $dateMin = date_create("01-01-1920");
+              //     if($dateMin > $date){
+              //         $error->append("dateError");
+              //     }
+              //
+              //     $dateMin  = $this->timestampToDate($this->getNewDate(time(), - (10 * 365) ));
+              //     $dateMin = date_create($dateMin);
+              //     if($dateMin < $date){
+              //         $error->append("tooYoung");
+              //     }
+              //
+              // }
 
               if (count($error) == 0) {
-                $error->append($dateRequest);
+                // $error->append($dateRequest);
 
-            $this->manager->exec('INSERT INTO activityrequest (dateRequested, idActivity, idMember) VALUES (?,?,?)', [
+            $this->manager->exec('INSERT INTO activityrequest (dateRequested, utility, nbHours, idActivity, idMember ) VALUES (?,?,?,?,?)', [
                 $dateRequest,
+                $utility,
+                $nbHours,
                 $activity,
                 $idMember
             ]);
@@ -76,6 +78,24 @@ class ActivityManager{
     public function getActivity(){
         $found = $this->manager->getAll('SELECT * from activity');
         return $found;
+    }
+
+  //  SELECT `idActivityRequest`, `dateRequested`, `booked`, `activity`.`name` FROM `activityrequest` INNER JOIN `activity` ON `activityrequest`.`idActivity` = `activity`.`idActivity`
+  public function getActivityRequest($idMember){
+  //  public function getActivityRequest($idMember){
+      $found = $this->manager->getAll('SELECT idActivityRequest, dateRequested, booked, utility, nbHours, activity.name from activityrequest INNER JOIN activity ON activityrequest.idActivity = activity.idActivity WHERE idMember = ?', [$idMember]);
+        return $found;
+    }
+
+    public function getActivityRequestAll(){
+        $found = $this->manager->getAll('SELECT idActivityRequest, dateRequested, booked, utility, nbHours, activity.name AS "nameActivity", activity.instructorNeeded, aircrafttype.name AS "nameAircrafttype" from activityrequest INNER JOIN activity ON activityrequest.idActivity = activity.idActivity INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType WHERE booked = 0');
+        return $found;
+        // INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType
+    }
+
+    public function getActivityRequestAllBooked(){
+      $found = $this->manager->getAll('SELECT idActivityRequest, dateRequested, booked, utility, nbHours, activity.name AS "nameActivity", activity.instructorNeeded, aircrafttype.name AS "nameAircrafttype" from activityrequest INNER JOIN activity ON activityrequest.idActivity = activity.idActivity INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType WHERE booked = 1');
+      return $found;
     }
 
 }

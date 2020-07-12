@@ -65,7 +65,10 @@
                 </div>
 
                 <input name="clubOutside" placeholder="Nom du Club" id="clubOutside" class="common-input mb-20 form-control" type="text">
+              </div>
+                              <div class="col-lg-6 form-group">
                 <input name="license" placeholder="N° Licence FFA" id="license" class="common-input mb-20 form-control" type="text">
+
 
                 <input name="email" placeholder="Adresse mail" id="email" class="common-input mb-20 form-control" required="" type="email">
 
@@ -74,6 +77,8 @@
                 <input name="password" placeholder="Mot de passe" id="password" class="common-input mb-20 form-control" required="" type="password">
 
                 <input name="confirmPassword" placeholder="Confirmation de mot de passe" id="confirmPassword" class="common-input mb-20 form-control" required="" type="password">
+
+                <!-- <button onclick="getContribution()" class="genric-btn primary">Calculer ma cotisation</button> -->
 
 							</div>
 
@@ -155,14 +160,15 @@
 				type: "POST",
 				data: {data: JSON.stringify(data1)},
 				success: function(data, status, xhr){
-          console.log( JSON.stringify(data1));
+            window.location.replace("paymentContribution.html");
+      //    console.log( JSON.stringify(data1));
 				},
 				error: function(xhr, status, error){
 
           if(xhr.status != 200){
-          console.log( JSON.stringify(data1));
-
-						console.log(xhr.responseText);
+      //    console.log( JSON.stringify(data1));
+          console.log('888');
+				//		console.log(xhr.responseText);
 						showError(JSON.parse(xhr.responseText));
 					}
 
@@ -171,6 +177,38 @@
 
 		$.ajax(option);
 		}
+    //
+    // function getContribution(){
+    //
+    //   var items = {
+    //     birthDate: $('#birthDate').val(),
+    //     memberOutside: $('#memberOutside').val(),
+    //   }
+    //
+    //   var option = {
+		// 		url: '../api/register/getContribution.php',
+		// 		dataType: 'text',
+		// 		type: "POST",
+		// 		data: {data: JSON.stringify(items)},
+		// 		success: function(data, status, xhr){
+    //       console.log( JSON.stringify(items));
+		// 		},
+		// 		error: function(xhr, status, error){
+    //
+    //       if(xhr.status != 200){
+    //       console.log( JSON.stringify(items));
+    //
+		// 				console.log(xhr.responseText);
+		// 				showError(JSON.parse(xhr.responseText));
+		// 			}
+    //
+		// 		}
+		// 	};
+    //
+		// $.ajax(option);
+		// }
+
+
 
 
 		function showError(error){

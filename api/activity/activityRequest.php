@@ -26,21 +26,23 @@ else{
 }
 
 if (isset($json['dateRequest']) &&
-    isset($json['activity']) && isset($idMember) ){
+    isset($json['activity']) &&
+        isset($json['utility']) &&
+            isset($json['nbHours']) && isset($idMember) ){
 
 
     $result = $activityManager->addActivityRequest($json['dateRequest'],
-        $json['activity'], $idMember);
+        $json['activity'], $json['utility'], $json['nbHours'], $idMember);
 
     if($result == "ok"){
         http_response_code(200);
         die();
     }
-    http_response_code(402);
-    echo json_encode($result);
+  //  http_response_code(402);
+  //  echo json_encode($result);
     die();
 }
 
-http_response_code(400);
-echo "empty";
+//http_response_code(400);
+//echo "empty";
 die();

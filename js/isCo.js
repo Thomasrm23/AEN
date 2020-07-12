@@ -22,6 +22,7 @@ function deco() {
         dataType: 'text',
         type: "POST",
         success: function (data, status, xhr) {
+          window.location.replace("index.html");
         },
         error: function (xhr, status, error) {
 

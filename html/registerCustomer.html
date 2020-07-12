@@ -172,12 +172,6 @@
         confirmPassword: $('#confirmPassword').val()
 			};
 
-
-			console.log("custooo");
-      console.log("nothing");
-      console.log("commmmit");
-
-
 			var option = {
 				url: '../api/register/registerCustomer.php',
 				dataType: 'text',
@@ -185,9 +179,7 @@
 				data: {data: JSON.stringify(data1)},
 				success: function(data, status, xhr){
           console.log( JSON.stringify(data1));
-        //  console.log("ez");
-        //  print_r(data: JSON.stringify(data));
-          //echo(data: JSON.stringify(data));
+          window.location.replace("index.html");
 				},
 				error: function(xhr, status, error){
           //console.log(error);
