@@ -38,12 +38,12 @@ if (isset($json['lastName']) &&
     if($result == "ok"){
       // repasser l'amount vers la page de payment
 
-      if (checkdate($json['birthDate']->format('m'), $json['birthDate']->format('d'), $json['birthDate']->format('Y'))){
-        $contribution = $registerMember->getContribution($json['birthDate'],
-        $json['memberOutside']);  // peut etre tabbbb
-        if ($contribution != null) {
-            echo json_encode($contribution);
-        }
+      // if (checkdate($json['birthDate']->format('m'), $json['birthDate']->format('d'), $json['birthDate']->format('Y'))){
+      //   $contribution = $registerMember->getContribution($json['birthDate'],
+      //   $json['memberOutside']) ;  // peut etre tabbbb
+      //   if ($contribution != null) {
+      //       echo json_encode($contribution);
+      //   }
 
       }
 
@@ -60,6 +60,6 @@ else{
 
 http_response_code(400);
 echo "empty";
-//echo json_encode($contribution);
+// echo json_encode($contribution);
 die();
 }

@@ -50,8 +50,36 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-8">
-          				
-                  <li value="" class="amount"></li>
+
+
+
+                <!-- <li value="" class="amount"></li> -->
+<?php
+
+$lastName = trim($_POST['lastName']);
+$firstName = trim($_POST['firstName']);
+$birthDate = trim($_POST['birthDate']);
+$memberOutside = trim($_POST['memberOutside']);
+$clubOutside = trim($_POST['clubOutside']);
+$license = trim($_POST['license']);
+$email = trim($_POST['email']);
+$login = trim($_POST['login']);
+$password = trim($_POST['password']);
+$confirmPassword = trim($_POST['password']);
+echo $firstName;
+
+//
+// header("Access-Control-Allow-Origin: *");
+// // header('Content-type: application/json');
+//
+//
+// $json = NULL;
+// $json = json_decode($_POST['data'], true);
+// echo $json_decode['lastName'];
+// echo $json['lastName'];
+
+ ?>
+
 
 				</div>
 			</div>
@@ -102,31 +130,31 @@
 	</script> -->
 
 	<script type="text/javascript">
-
-  window.onload = function() {
-
-    var option = {
-      url: '../api/register/registerMember.php',
-      dataType: "text",
-      type: "POST",
-      data: {},
-      success: function(data, status, xhr){
-        let amount = JSON.parse(xhr.responseText);
-        let optionElement;
-        for ( let i = 0; i < activity.length; i++){
-          optionElement = document.createElement("option");
-          optionElement.setAttribute( "value", amount[i]['feeContribution']);
-          optionElement.innerHTML = amount[i]['feeContribution'];
-          $('#amount').append(optionElement);
-        }
-        //  console.log();
-      },
-      error: function( xhr, status, error ){
-
-      }
-    };
-    $.ajax(option);
-  };
+  //
+  // window.onload = function() {
+  //
+  //   var option = {
+  //     url: '../api/register/registerMember.php',
+  //     dataType: "text",
+  //     type: "POST",
+  //     data: {},
+  //     success: function(data, status, xhr){
+  //       let amount = JSON.parse(xhr.responseText);
+  //       let optionElement;
+  //       for ( let i = 0; i < activity.length; i++){
+  //         optionElement = document.createElement("option");
+  //         optionElement.setAttribute( "value", amount[i]['feeContribution']);
+  //         optionElement.innerHTML = amount[i]['feeContribution'];
+  //         $('#amount').append(optionElement);
+  //       }
+  //       //  console.log();
+  //     },
+  //     error: function( xhr, status, error ){
+  //
+  //     }
+  //   };
+  //   $.ajax(option);
+  // };
 
 
     //

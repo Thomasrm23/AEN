@@ -12,7 +12,11 @@
         <link rel="stylesheet" href="../fullcalendar/timegrid/main.css">
         <link rel="stylesheet" href="../fullcalendar/list/main.css">
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.6/fullcalendar.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
+
+ <!-- prerequis comme sur les autres pages -->
         	<link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700" rel="stylesheet">
 
         	<link rel="stylesheet" href="../css/linearicons.css">
@@ -26,29 +30,31 @@
         	<link rel="stylesheet" href="../css/main.css">
 
 
+          <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
 
     </head>
     <body>
-      <div id='wrap'>
+      <div id="wrap">
 
-              <div id='external-events'>
-                <div id='external-events-listing'>
+              <div id="external-events">
+                <div id="external-events-listing">
                   <h4>Draggable Events</h4>
-                  <div class='fc-event'>My Event 1</div>
-                  <div class='fc-event'>My Event 2</div>
-                  <div class='fc-event'>My Event 3</div>
-                  <div class='fc-event'>My Event 4</div>
-                  <div class='fc-event'>My Event 5</div>
+                  <div class="fc-event">My Event 1</div>
+                  <div class="fc-event">My Event 2</div>
+                  <div class="fc-event">My Event 3</div>
+                  <div class="fc-event">My Event 4</div>
+                  <div class="fc-event">My Event 5</div>
                 </div>
                 <p>
-                  <input type='checkbox' id='drop-remove' checked='checked' />
-                  <label for='drop-remove'>remove after drop</label>
+                  <input type="checkbox" id="drop-remove" checked="checked" />
+                  <label for="drop-remove">remove after drop</label>
                 </p>
               </div>
 
-              <div id='calendar'></div>
+              <div id="calendar"></div>
 
-              <div style='clear:both'></div>
+              <div style="clear:both"></div>
 
 
           </div>
@@ -57,6 +63,7 @@
         <footer>
         </footer>
 
+<!-- commun a toutes les pages -->
         <script src="../jquery/jquery-3.2.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
@@ -77,10 +84,12 @@
 
         </script>
 
-                  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-                  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+            <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
+            <!-- <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
 
 
+                  <!-- <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script> -->
 
         <!--js fullcalendar-->
         <script type="module" src="../fullcalendar/core/main.js"></script>
@@ -92,19 +101,19 @@
 
 
 <script>
-import { Calendar } from '@fullcalendar/core';
-import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
+// import { Calendar } from "@fullcalendar/core";
+// import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
         $(document).ready(function() {
 
 
                 /* initialize the external events
                 -----------------------------------------------------------------*/
 
-                $('#external-events .fc-event').each(function() {
+                $("#external-events .fc-event").each(function() {
 
                     // store data so the calendar knows to render an event upon drop
-                    $(this).data('event', {
-                        title: $.trim($(this).text()), // use the element's text as the event title
+                    $(this).data("event", {
+                        title: $.trim($(this).text()), // use the element"s text as the event title
                         stick: true // maintain when user navigates (see docs on the renderEvent method)
                     });
 
@@ -121,18 +130,18 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
                 /* initialize the calendar
                 -----------------------------------------------------------------*/
 
-                $('#calendar').fullCalendar({
+                $("#calendar").fullCalendar({
                     header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
+                        left: "prev,next today",
+                        center: "title",
+                        right: "month,agendaWeek,agendaDay"
                     },
                     editable: true,
                     droppable: true, // this allows things to be dropped onto the calendar
                     dragRevertDuration: 0,
                     drop: function() {
                         // is the "remove after drop" checkbox checked?
-                        if ($('#drop-remove').is(':checked')) {
+                        if ($("#drop-remove").is(":checked")) {
                             // if so, remove the element from the "Draggable Events" list
                             $(this).remove();
                         }
@@ -140,14 +149,14 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
                     eventDragStop: function( event, jsEvent, ui, view ) {
 
                         if(isEventOverDiv(jsEvent.clientX, jsEvent.clientY)) {
-                            $('#calendar').fullCalendar('removeEvents', event._id);
-                            var el = $( "<div class='fc-event'>" ).appendTo( '#external-events-listing' ).text( event.title );
+                            $("#calendar").fullCalendar("removeEvents", event._id);
+                            var el = $( '<div class="fc-event">' ).appendTo( "#external-events-listing" ).text( event.title );
                             el.draggable({
                               zIndex: 999,
                               revert: true,
                               revertDuration: 0
                             });
-                            el.data('event', { title: event.title, id :event.id, stick: true });
+                            el.data("event", { title: event.title, id :event.id, stick: true });
                         }
                     }
                 });
@@ -155,7 +164,7 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
 
                 var isEventOverDiv = function(x, y) {
 
-                    var external_events = $( '#external-events' );
+                    var external_events = $( "#external-events" );
                     var offset = external_events.offset();
                     offset.right = external_events.width() + offset.left;
                     offset.bottom = external_events.height() + offset.top;
@@ -175,3 +184,46 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
         </script>
     </body>
 </html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Drag an event from FullCalendar to trash or back to external list</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.6/fullcalendar.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div id="wrap">
+
+        <div id="external-events">
+          <div id="external-events-listing">
+            <h4>Draggable Events</h4>
+            <div class="fc-event">My Event 1</div>
+            <div class="fc-event">My Event 2</div>
+            <div class="fc-event">My Event 3</div>
+            <div class="fc-event">My Event 4</div>
+            <div class="fc-event">My Event 5</div>
+          </div>
+          <p>
+            <input type="checkbox" id="drop-remove" checked="checked" />
+            <label for="drop-remove">remove after drop</label>
+          </p>
+        </div>
+
+        <div id="calendar"></div>
+
+        <div style="clear:both"></div>
+
+    </div>
+  <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.6/fullcalendar.min.js"></script>
+<script  src="./script.js"></script>
+
+</body>
+</html> -->

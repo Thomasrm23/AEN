@@ -115,10 +115,15 @@ class RegisterMemberManager{
         return $randomString;
     }
 
-    public function getContribution($birthDate, $memberOutside){
+  //  public function getContribution($birthDate, $memberOutside){
+      public function getContribution(){
 
-        $today = date('m-d-Y');
-        $diff = date_diff(date_create($birthDate), date_create($today));
+
+$date1 =  new DateTime(07-13-2000);
+$now = new DateTime();
+      //  $today = date('m-d-Y');
+    //    $diff = date_diff(date_create($birthDate), date_create($today));
+        $diff = date_diff($now, $date1);
         $age = $diff->format('%y');
 
         if ($age < 21 || $memberOutside == 1){

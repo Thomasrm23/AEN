@@ -78,13 +78,32 @@
 
                 <input name="confirmPassword" placeholder="Confirmation de mot de passe" id="confirmPassword" class="common-input mb-20 form-control" required="" type="password">
 
-                <!-- <button onclick="getContribution()" class="genric-btn primary">Calculer ma cotisation</button> -->
+                 <!-- <button onclick="getContribution()" class="genric-btn primary">Calculer ma cotisation</button> -->
+
 
 							</div>
 
-							<div class="col-lg-12">
+              <div class="col-lg-12">
 								<button onclick="validateRegistration()" class="genric-btn primary" style="float: right;">M'inscrire</button>
 							</div>
+              <div></div>
+              <div class="col-lg-12">
+								<button onclick="passPayment()" class="genric-btn primary" style="float: right;">aller a la page paiement</button>
+							</div>
+
+              <?php
+
+              // require_once __DIR__ . '/../api/DataBaseManager.php';
+              // require_once __DIR__ . '/../api/manager/RegisterMemberManager.php';
+              //
+              //     $manager = new DataBaseManager();
+              //     $registerMember = new RegisterMemberManager($manager);
+              //     $contribution = $registerMember->getContribution() ;
+              // //    $contribution = $registerMember->getContribution($_POST['birthDate'], $_POST['memberOutside']) ;
+              //     $contribution = $contribution[0]['feeContribution'];
+              //     echo $contribution;
+
+               ?>
 						</div>
 					</form>
 				</div>
@@ -134,6 +153,39 @@
 		    $.ajax(option);
 		}
 	</script> -->
+  <script type="text/javascript">
+
+    function passPayment(){
+
+      var data1 = {
+        lastName: $('#lastName').val()
+      }
+
+      var option = {
+        url: 'paymentContribution.php',
+        dataType: 'text',
+        type: "POST",
+        data: {data: JSON.stringify(data1)},
+        success: function(data, status, xhr){
+            window.location.replace("paymentContribution.php");
+      //    console.log( JSON.stringify(data1));
+        },
+        error: function(xhr, status, error){
+
+          if(xhr.status != 200){
+      //    console.log( JSON.stringify(data1));
+          console.log('888');
+        //		console.log(xhr.responseText);
+            showError(JSON.parse(xhr.responseText));
+          }
+
+        }
+      };
+
+       $.ajax(option);
+
+    }
+    </script>
 
 	<script type="text/javascript">
 
@@ -160,7 +212,7 @@
 				type: "POST",
 				data: {data: JSON.stringify(data1)},
 				success: function(data, status, xhr){
-            window.location.replace("paymentContribution.html");
+            window.location.replace("paymentContribution.php");
       //    console.log( JSON.stringify(data1));
 				},
 				error: function(xhr, status, error){
@@ -177,36 +229,37 @@
 
 		$.ajax(option);
 		}
-    //
-    // function getContribution(){
-    //
-    //   var items = {
-    //     birthDate: $('#birthDate').val(),
-    //     memberOutside: $('#memberOutside').val(),
-    //   }
-    //
-    //   var option = {
-		// 		url: '../api/register/getContribution.php',
-		// 		dataType: 'text',
-		// 		type: "POST",
-		// 		data: {data: JSON.stringify(items)},
-		// 		success: function(data, status, xhr){
-    //       console.log( JSON.stringify(items));
-		// 		},
-		// 		error: function(xhr, status, error){
-    //
-    //       if(xhr.status != 200){
-    //       console.log( JSON.stringify(items));
-    //
-		// 				console.log(xhr.responseText);
-		// 				showError(JSON.parse(xhr.responseText));
-		// 			}
-    //
-		// 		}
-		// 	};
-    //
-		// $.ajax(option);
-		// }
+
+
+    function getContribution(){
+
+      var items = {
+        birthDate: $('#birthDate').val(),
+        memberOutside: $('#memberOutside').val(),
+      }
+
+      var option = {
+				url: '../api/register/getContribution.php',
+				dataType: 'text',
+				type: "POST",
+				data: {data: JSON.stringify(items)},
+				success: function(data, status, xhr){
+          console.log( JSON.stringify(items));
+				},
+				error: function(xhr, status, error){
+
+          if(xhr.status != 200){
+          console.log( JSON.stringify(items));
+
+						console.log(xhr.responseText);
+						showError(JSON.parse(xhr.responseText));
+					}
+
+				}
+			};
+
+		$.ajax(option);
+		}
 
 
 
