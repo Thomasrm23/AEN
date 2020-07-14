@@ -89,6 +89,7 @@ $headerAdmin = "
 						<li><a href=\"index.html\">Accueil</a></li>
 						<li><a href=\"\">Consulter les commandes</a></li>
 						<li><a href=\"activityHistoryAll.html\">Consulter les activités</a></li>
+						<li><a href=\"planning.html\">Consulter le planning</a></li>
 						<li><a href=\"\">Consulter les membres</a></li>
 						<li><a href=\"\">Gérer les ressources</a></li>
 						<li><a href=\"\">Gérer les tables de paramétrages</a></li>

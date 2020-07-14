@@ -51,7 +51,7 @@ class RegisterMemberManager{
                 $error->append("dateError");
             }
 
-            $dateMin  = $this->timestampToDate($this->getNewDate(time(), - (10 * 365) ));
+            $dateMin  = $this->timestampToDate($this->getNewDate(time(), - (15 * 365) ));
             $dateMin = date_create($dateMin);
             if($dateMin < $date){
                 $error->append("tooYoung");
@@ -76,6 +76,22 @@ class RegisterMemberManager{
             $error->append($birthDate);
             $error->append($password);
 
+        //    $date1 =  new DateTime(07-13-2000);
+            $now = new DateTime();
+                  //  $today = date('m-d-Y');
+                //    $diff = date_diff(date_create($birthDate), date_create($today));
+                    $diff = date_diff($now, new DateTime($birthDate)); // new datetime
+                    $age = $diff->format('%y');
+
+                    if ($age < 21 || $memberOutside == 1){
+                      $typeContribution = 2;
+                    }else{
+                      $typeContribution = 1;
+                    }
+
+                //    $found = $this->manager->getAll('SELECT feeContribution FROM membercontribution WHERE idMemberContribution = ?', [$typeContribution]);
+                  //  return $found;
+
 
             $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password, type) VALUES (?,?,?,?,?,?)', [
                 (string)$lastName,
@@ -88,13 +104,21 @@ class RegisterMemberManager{
 
             $newId = $this->manager->getLastInsertId();
 
-            $this->manager->exec('INSERT INTO member (birthDate, memberOutside, clubOutside, license, idUser) VALUES (?,?,?,?,?)', [
+            $this->manager->exec('INSERT INTO member (birthDate, memberOutside, clubOutside, license, contributionPayed, idUser, idMemberContribution) VALUES (?,?,?,?,?,?,?)', [
                   $birthDate,
                   $memberOutside,
                   $clubOutside,
                   $license,
-                  $newId
+                  0,
+                  $newId,
+                  $typeContribution
               ]);
+
+              $newIdMember = $this->manager->getLastInsertId();
+              session_start();
+              $_SESSION['idMember'] = $newIdMember;
+              
+
 
             return "ok";
         }else{
@@ -116,26 +140,11 @@ class RegisterMemberManager{
     }
 
   //  public function getContribution($birthDate, $memberOutside){
-      public function getContribution(){
+      public function getContribution($idMember){
 
-
-$date1 =  new DateTime(07-13-2000);
-$now = new DateTime();
-      //  $today = date('m-d-Y');
-    //    $diff = date_diff(date_create($birthDate), date_create($today));
-        $diff = date_diff($now, $date1);
-        $age = $diff->format('%y');
-
-        if ($age < 21 || $memberOutside == 1){
-          $typeContribution = 2;
-        }else{
-          $typeContribution = 1;
-        }
-
-        $found = $this->manager->getAll('SELECT feeContribution FROM membercontribution WHERE idMemberContribution = ?', [$typeContribution]);
+        $found = $this->manager->getAll('SELECT feeContribution FROM membercontribution INNER JOIN member ON member.idMemberContribution = membercontribution.idMemberContribution WHERE idMember = ?', [$idMember]);
         return $found;
 
     }
-
 
 }

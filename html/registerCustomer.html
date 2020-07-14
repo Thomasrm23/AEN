@@ -21,9 +21,6 @@
 	<link rel="stylesheet" href="../css/jquery-ui.css">
 	<link rel="stylesheet" href="../css/main.css">
 
-  <!-- <script src="//code.jquery.com/jquery-3.5.1.min.js"></script> -->
-  <!-- <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
-
 
 </head>
 <body>
@@ -106,27 +103,6 @@
  <script src="../js/isCo.js">
 
  </script>
-<!--
-  <script>
-		isCo();
-		function isCo(){
-
-		    let option = {
-		        url: '../api/session/isCo.php',
-		        dataType: 'text',
-		        type: "POST",
-		        success: function(data, status, xhr){
-		            $('#header').html(xhr.responseText);
-		        },
-		        error: function(xhr, status, error){;
-		            $('#header').html(xhr.responseText);
-		        }
-		    };
-
-		    $.ajax(option);
-		}
-	</script> -->
-
 
 	<script type="text/javascript">
 
@@ -137,15 +113,28 @@
       event.preventDefault();
 
       alert('test de click du bouton');
-      var lastName = $('#lastName').val();
+      //var lastName = $('#lastName').val();
+
+      var data1 = {
+				lastName: $('#lastName').val(),
+        firstName: $('#firstName').val(),
+        email: $('#email').val(),
+        country: $('#countryList').val(),
+        login: $('#login').val(),
+        password: $('#password').val(),
+        confirmPassword: $('#confirmPassword').val()
+			};
+
 
       $.ajax({
         url: '../api/register/registerCustomer.php',
         dataType: 'text',
         method: "POST",
-        data : {
-          lastName : lastName
-        },
+        data : {data: JSON.stringify(data1)},
+        // data : {
+        //   lastName : lastName
+        // }
+
         success: function(data, status, xhr){
           console.log(data);
 
@@ -194,25 +183,25 @@
           };
 
 
-
-		function validateRegistration(){
-
-      alert('test');
-
-    var lastName = $('#lastName').val();
-
-			var data1 = {
-				//lastName: $('#lastName').val(),
-        firstName: $('#firstName').val(),
-        email: $('#email').val(),
-        country: $('#countryList').val(),
-        login: $('#login').val(),
-        password: $('#password').val(),
-        confirmPassword: $('#confirmPassword').val()
-			};
-
-
-		}
+    //
+		// function validateRegistration(){
+    //
+    //   alert('test');
+    //
+    // var lastName = $('#lastName').val();
+    //
+		// 	var data1 = {
+		// 		//lastName: $('#lastName').val(),
+    //     firstName: $('#firstName').val(),
+    //     email: $('#email').val(),
+    //     country: $('#countryList').val(),
+    //     login: $('#login').val(),
+    //     password: $('#password').val(),
+    //     confirmPassword: $('#confirmPassword').val()
+		// 	};
+    //
+    //
+		// }
 
 		function showError(error){
     	for(let i = 0; i < Object.keys(error).length; i++){

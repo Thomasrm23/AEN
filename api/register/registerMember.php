@@ -6,7 +6,9 @@ require_once __DIR__ . '/../manager/RegisterMemberManager.php';
   //  header("Access-Control-Allow-Origin: *");
     //header('Content-type: application/json');
 
+
 $json = json_decode($_POST['data'], true);
+
 
 if (isset($json['lastName']) &&
     isset($json['firstName']) &&
@@ -18,6 +20,7 @@ if (isset($json['lastName']) &&
     isset($json['login']) &&
     isset($json['password']) &&
     isset($json['confirmPassword'])){
+
 
     $manager = new DataBaseManager();
     $registerMember = new RegisterMemberManager($manager);
@@ -36,6 +39,7 @@ if (isset($json['lastName']) &&
 
 
     if($result == "ok"){
+
       // repasser l'amount vers la page de payment
 
       // if (checkdate($json['birthDate']->format('m'), $json['birthDate']->format('d'), $json['birthDate']->format('Y'))){
@@ -45,8 +49,7 @@ if (isset($json['lastName']) &&
       //       echo json_encode($contribution);
       //   }
 
-      }
-
+    //  }
         http_response_code(200);
         die();
     }
@@ -57,7 +60,6 @@ if (isset($json['lastName']) &&
     }
 }
 else{
-
 http_response_code(400);
 echo "empty";
 // echo json_encode($contribution);

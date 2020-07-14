@@ -21,8 +21,6 @@
 	<link rel="stylesheet" href="../css/jquery-ui.css">
 	<link rel="stylesheet" href="../css/main.css">
 
-	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
 
 </head>
 <body>
@@ -84,26 +82,8 @@
 							</div>
 
               <div class="col-lg-12">
-								<button onclick="validateRegistration()" class="genric-btn primary" style="float: right;">M'inscrire</button>
+                <button class="genric-btn primary" id="submit" style="float: right;">M'inscrire</button>
 							</div>
-              <div></div>
-              <div class="col-lg-12">
-								<button onclick="passPayment()" class="genric-btn primary" style="float: right;">aller a la page paiement</button>
-							</div>
-
-              <?php
-
-              // require_once __DIR__ . '/../api/DataBaseManager.php';
-              // require_once __DIR__ . '/../api/manager/RegisterMemberManager.php';
-              //
-              //     $manager = new DataBaseManager();
-              //     $registerMember = new RegisterMemberManager($manager);
-              //     $contribution = $registerMember->getContribution() ;
-              // //    $contribution = $registerMember->getContribution($_POST['birthDate'], $_POST['memberOutside']) ;
-              //     $contribution = $contribution[0]['feeContribution'];
-              //     echo $contribution;
-
-               ?>
 						</div>
 					</form>
 				</div>
@@ -133,133 +113,134 @@
   <script src="../js/isCo.js">
 
   </script>
-<!--
-	<script>
-		isCo();
-		function isCo(){
 
-		    let option = {
-		        url: '../api/session/isCo.php',
-		        dataType: 'text',
-		        type: "POST",
-		        success: function(data, status, xhr){
-		            $('#header').html(xhr.responseText);
-		        },
-		        error: function(xhr, status, error){;
-		            $('#header').html(xhr.responseText);
-		        }
-		    };
-
-		    $.ajax(option);
-		}
-	</script> -->
-  <script type="text/javascript">
-
-    function passPayment(){
-
-      var data1 = {
-        lastName: $('#lastName').val()
-      }
-
-      var option = {
-        url: 'paymentContribution.php',
-        dataType: 'text',
-        type: "POST",
-        data: {data: JSON.stringify(data1)},
-        success: function(data, status, xhr){
-            window.location.replace("paymentContribution.php");
-      //    console.log( JSON.stringify(data1));
-        },
-        error: function(xhr, status, error){
-
-          if(xhr.status != 200){
-      //    console.log( JSON.stringify(data1));
-          console.log('888');
-        //		console.log(xhr.responseText);
-            showError(JSON.parse(xhr.responseText));
-          }
-
-        }
-      };
-
-       $.ajax(option);
-
-    }
-    </script>
 
 	<script type="text/javascript">
 
-		function validateRegistration(){
 
-			var data1 = {
-				lastName: $('#lastName').val(),
-        firstName: $('#firstName').val(),
-        birthDate: $('#birthDate').val(),
-        memberOutside: $('#memberOutside').val(),
-        clubOutside: $('#clubOutside').val(),
-        license: $('#license').val(),
-        email: $('#email').val(),
-        login: $('#login').val(),
-        password: $('#password').val(),
-        confirmPassword: $('#confirmPassword').val()
-			};
+    $(function(){
 
+      // Ecoute de la soumission du formulaire
+      $(document).on('click','#submit' ,function(event){
+        event.preventDefault();
 
+    //    alert('test de click du bouton');
+        //var lastName = $('#lastName').val();
 
-			var option = {
-				url: '../api/register/registerMember.php',
-				dataType: 'text',
-				type: "POST",
-				data: {data: JSON.stringify(data1)},
-				success: function(data, status, xhr){
-            window.location.replace("paymentContribution.php");
-      //    console.log( JSON.stringify(data1));
-				},
-				error: function(xhr, status, error){
-
-          if(xhr.status != 200){
-      //    console.log( JSON.stringify(data1));
-          console.log('888');
-				//		console.log(xhr.responseText);
-						showError(JSON.parse(xhr.responseText));
-					}
-
-				}
-			};
-
-		$.ajax(option);
-		}
+        var data1 = {
+          lastName: $('#lastName').val(),
+          firstName: $('#firstName').val(),
+          birthDate: $('#birthDate').val(),
+          memberOutside: $('#memberOutside').val(),
+          clubOutside: $('#clubOutside').val(),
+          license: $('#license').val(),
+          email: $('#email').val(),
+          login: $('#login').val(),
+          password: $('#password').val(),
+          confirmPassword: $('#confirmPassword').val()
+  			};
 
 
-    function getContribution(){
+        $.ajax({
+          url: '../api/register/registerMember.php',
+          dataType: 'text',
+          method: "POST",
+          data : {data: JSON.stringify(data1)},
+          success: function(data, status, xhr){
+            console.log(data);
 
-      var items = {
-        birthDate: $('#birthDate').val(),
-        memberOutside: $('#memberOutside').val(),
-      }
+         //   console.log( JSON.stringify(data1));
+           window.location.replace("../payment/paymentContribution.html");
+          },
+         error: function(xhr, status, error){
+           //console.log(error);
+         //      ;
+         //  if(xhr.status != 200){
+           //  if(xhr.status == 402){
+             console.log(xhr.responseText);
+             showError(JSON.parse(xhr.responseText));
+         //			}
+         }
+        })
+      })
+    })
 
-      var option = {
-				url: '../api/register/getContribution.php',
-				dataType: 'text',
-				type: "POST",
-				data: {data: JSON.stringify(items)},
-				success: function(data, status, xhr){
-          console.log( JSON.stringify(items));
-				},
-				error: function(xhr, status, error){
 
-          if(xhr.status != 200){
-          console.log( JSON.stringify(items));
 
-						console.log(xhr.responseText);
-						showError(JSON.parse(xhr.responseText));
-					}
 
-				}
-			};
+// a supprimer
 
-		$.ajax(option);
-		}
+		// function validateRegistration(){
+    //
+		// 	var data1 = {
+		// 		lastName: $('#lastName').val(),
+    //     firstName: $('#firstName').val(),
+    //     birthDate: $('#birthDate').val(),
+    //     memberOutside: $('#memberOutside').val(),
+    //     clubOutside: $('#clubOutside').val(),
+    //     license: $('#license').val(),
+    //     email: $('#email').val(),
+    //     login: $('#login').val(),
+    //     password: $('#password').val(),
+    //     confirmPassword: $('#confirmPassword').val()
+		// 	};
+    //
+    //
+    //
+		// 	var option = {
+		// 		url: '../api/register/registerMember.php',
+		// 		dataType: 'text',
+		// 		type: "POST",
+		// 		data: {data: JSON.stringify(data1)},
+		// 		success: function(data, status, xhr){
+    //         window.location.replace("paymentContribution.php");
+    //   //    console.log( JSON.stringify(data1));
+		// 		},
+		// 		error: function(xhr, status, error){
+    //
+    //       if(xhr.status != 200){
+    //   //    console.log( JSON.stringify(data1));
+    //       console.log('888');
+		// 		//		console.log(xhr.responseText);
+		// 				showError(JSON.parse(xhr.responseText));
+		// 			}
+    //
+		// 		}
+		// 	};
+    //
+		// $.ajax(option);
+		// }
+    //
+    //
+    // function getContribution(){
+    //
+    //   var items = {
+    //     birthDate: $('#birthDate').val(),
+    //     memberOutside: $('#memberOutside').val(),
+    //   }
+    //
+    //   var option = {
+		// 		url: '../api/register/getContribution.php',
+		// 		dataType: 'text',
+		// 		type: "POST",
+		// 		data: {data: JSON.stringify(items)},
+		// 		success: function(data, status, xhr){
+    //       console.log( JSON.stringify(items));
+		// 		},
+		// 		error: function(xhr, status, error){
+    //
+    //       if(xhr.status != 200){
+    //       console.log( JSON.stringify(items));
+    //
+		// 				console.log(xhr.responseText);
+		// 				showError(JSON.parse(xhr.responseText));
+		// 			}
+    //
+		// 		}
+		// 	};
+    //
+		// $.ajax(option);
+		// }
 
 
 
