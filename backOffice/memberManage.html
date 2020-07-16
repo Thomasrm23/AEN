@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no">
+	<title>DataTables example - Server-side processing</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700" rel="stylesheet">
+
+	<link rel="stylesheet" href="../css/linearicons.css">
+	<link rel="stylesheet" href="../css/font-awesome.min.css">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<link rel="stylesheet" href="../css/magnific-popup.css">
+	<link rel="stylesheet" href="../css/nice-select.css">
+	<link rel="stylesheet" href="../css/animate.min.css">
+	<link rel="stylesheet" href="../css/owl.carousel.css">
+	<link rel="stylesheet" href="../css/jquery-ui.css">
+	<link rel="stylesheet" href="../css/main.css">
+
+	<link rel="stylesheet" type="text/css" href="../DataTables-master/DataTables-master/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="../DataTables-master/DataTables-master/examples/resources/syntax/shCore.css">
+	<link rel="stylesheet" type="text/css" href="../DataTables-master/DataTables-master/examples/resources/demo.css">
+	<style type="text/css" class="init">
+
+	</style>
+	<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script type="text/javascript" language="javascript" src="../DataTables-master/DataTables-master/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="../DataTables-master/DataTables-master/examples/resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="../DataTables-master/DataTables-master/examples/resources/demo.js"></script>
+	<script type="text/javascript" language="javascript" class="init">
+
+$(document).ready(function() {
+	$('#memberList').DataTable( {
+		"processing": true,
+		"serverSide": true,
+		"ajax": "memberManage.php"
+	} );
+} );
+
+	</script>
+</head>
+<body class="dt-example">
+	<header id="header">
+
+	</header>
+	<section class="banner-area relative about-banner" id="home">
+		<img class="cta-img img-fluid" src="img/cta-img.png" alt="">
+		<div class="overlay overlay-bg"></div>
+		<div class="container">
+			<div class="row d-flex align-items-center justify-content-center">
+				<div class="about-content col-lg-12">
+					<h1>
+						Gestion des membres
+					</h1>
+					<p class="link-nav"><a href="index.html">Accueil </a>
+						<span class="lnr lnr-arrow-right"></span> <a href="memberManage.html">
+						  Gestion des membres </a></p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="contact-page-area section-gap">
+		<div class="container">
+			<section>
+				<div class="demo-html"></div>
+				<table id="memberList" class="display" style="width:100%">
+					<thead>
+						<tr>
+							<th>Prénom</th>
+							<th>Nom</th>
+							<th>Adresse email</th>
+							<th>Login</th>
+							<!-- <th>Position</th>
+							<th>Office</th>
+							<th>Start date</th>
+							<th>Salary</th> -->
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<th>First name</th>
+							<th>Last name</th>
+							<th>Adresse email</th>
+							<th>Login</th>
+							<!-- <th>Position</th>
+							<th>Office</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr> -->
+					</tfoot>
+				</table>
+			</section>
+		</div>
+	</section>
+	<!-- <script src="../jquery/jquery-3.2.1.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	 crossorigin="anonymous"></script>
+	<script src="../js/vendor/bootstrap.min.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+
+	<script src="../js/easing.min.js"></script>
+	<script src="../js/hoverIntent.js"></script>
+	<script src="../js/superfish.min.js"></script>
+	<script src="../js/jquery.ajaxchimp.min.js"></script>
+	<script src="../js/jquery.magnific-popup.min.js"></script>
+	<script src="../js/jquery.tabs.min.js"></script>
+	<script src="../js/jquery.nice-select.min.js"></script>
+	<script src="../js/owl.carousel.min.js"></script>
+	<script src="../js/main.js"></script>
+	<script src="../js/isCo.js"></script>
+
+</body>
+</html>

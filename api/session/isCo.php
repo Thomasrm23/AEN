@@ -64,7 +64,7 @@ $headerMember = "
 				<nav id=\"nav-menu-container\">
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
-						<li><a href=\"activityRequest.html\">Réserver une activité</a></li>
+						<li><a href=\"activityRequest.php\">Réserver une activité</a></li>
 						<li><a href=\"activityHistory.html\">Consulter ses activités</a></li>
 						<li><a href=\"accountMember.html\">Mon compte</a></li>
 
@@ -88,7 +88,7 @@ $headerAdmin = "
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
 						<li><a href=\"\">Consulter les commandes</a></li>
-						<li><a href=\"activityHistoryAll.html\">Consulter les activités</a></li>
+						<li><a href=\"activityHistoryAll.html\">Planifier les activités</a></li>
 						<li><a href=\"planning.html\">Consulter le planning</a></li>
 						<li><a href=\"\">Consulter les membres</a></li>
 						<li><a href=\"\">Gérer les ressources</a></li>

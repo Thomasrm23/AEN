@@ -52,7 +52,6 @@
         <div class="table-wrap col-lg-10">
 					<table class="schdule-table table table-bordered">
 						<thead class="thead-light">
-                <th class="head" scope="col">Date de l'activité</th>
                 <th class="head" scope="col">Activités</th>
                 <th class="head" scope="col">Utilisation</th>
                 <th class="head" scope="col">Temps en heures</th>
@@ -91,20 +90,19 @@
 
 	<script type="text/javascript">
   window.onload = function go(){
-          getActivityRequest();
+          getActivity();
 };
 
-  function getActivityRequest(){
-    var allIntervention;
+  function getActivity(){
 
     var options = {
-        url: "../api/activity/getActivityRequest.php",
+        url: "../api/activity/getActivity.php",
         dataType: "text",
         type: "POST",
 
         success: function( data, status, xhr){
 
-            showActivityRequest(JSON.parse(xhr.responseText));
+            showActivity(JSON.parse(xhr.responseText));
               },
         error: function(xhr, status, error){
 
@@ -113,50 +111,24 @@
     $.ajax(options);
 }
 
-function showActivityRequest(activity){
+function showActivity(activity){
 
-    //    console.log("fct showActivityRequest");
+    //    console.log("fct showActivity");
 
         let divHide = $('.show-activity-hide');
         let element;
         for(let i = 0; i < Object.keys(activity).length; i++){
-            addActivityRequest(activity[i]);
+            addActivity(activity[i]);
         }
     }
 
-//
-//     function addActivityRequest(activity){
-//     console.log(activity['dateRequested']);
-//     let  element = ' <div class="one-activity row m-t-20" id="activity-' + activity['idActivityRequest'] + '\">' +
-//     //
-//     //     ' <div class="col title-intervention" id="title-intervention-' + intervention['idIntervention'] + '" name="' + intervention['title'] + '"> <b>' + intervention["title"] + '</b></div>' +
-//     ' <div class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></div>' +
-//     ' <div class="col name-activity" id="name-activity-' + activity['name'] + '" name="' + activity['name'] + '"> <b>' + activity["name"] +'</b></div>' +
-//     ' <div class="col booked-activity" id="booked-activity-' + activity['booked'] + '" name="' + activity['booked'] + '"> <b>' + activity["booked"] +'</b></div>' +
-//         // ' <div class="col detail-intervention" id="detail-intervention-' + intervention['detail'] + '" name="' + intervention['detail'] + '"> <b>' +  " durant " + intervention["duration"] + "h"+ '</b></div>' +
-//         // ' <div class="col jobs-intervention" id="jobs-intervention-' + intervention['jobs'] + '" name="' + intervention['jobs'] + '"> <b>' + intervention["jobs"] + '</b></div>' +
-//         // ' <div class="col name-intervention" id="name-intervention-' + intervention['name'] + '" name="' + intervention['name'] + '"> <b>' + "Réalisé par M." + intervention["name"] + '</b></div>' +
-//         //
-//         //
-//         // '<a type="button" class="col intervention-accept dis-flex justify-content-end" href="../payment/payment.php" onclick="acceptIntervention(' + intervention['idIntervention'] + ')">Valider</a>' +
-//         //
-//         // '<a type="button" class="col intervention-refuse" href="InterventionHistory.php" onclick="refuseIntervention(' + intervention['idIntervention'] + ')">Annuler</a>' +
-//
-//         '</div>';
-//
-//
-//     $('.show-activity-hide').append(element);
-// }
 
-
-
-    function addActivityRequest(activity){
-    console.log(activity['dateRequested']);
+    function addActivity(activity){
      let  element = ' <tr>' +
-     //' <th class="name" scope="row" id="activity-' + activity['idActivityRequest'] + '\">' +
+     //' <th class="name" scope="row" id="activity-' + activity['idActivity'] + '\">' +
     //
     //     ' <div class="col title-intervention" id="title-intervention-' + intervention['idIntervention'] + '" name="' + intervention['title'] + '"> <b>' + intervention["title"] + '</b></div>' +
-    ' <td class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></td>' +
+    //' <td class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></td>' +
     ' <td class="col name-activity" id="name-activity-' + activity['name'] + '" name="' + activity['name'] + '"> <b>' + activity["name"] +'</b></td>' +
     ' <td class="col utility-activity" id="utility-activity-' + activity['utility'] + '" name="' + activity['utility'] + '"> <b>' + activity["utility"] +'</b></td>' +
     ' <td class="col nbHours-activity" id="nbHours-activity-' + activity['nbHours'] + '" name="' + activity['nbHours'] + '"> <b>' + activity["nbHours"] +'</b></td>' +

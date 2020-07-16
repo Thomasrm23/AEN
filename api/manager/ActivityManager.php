@@ -67,9 +67,9 @@ class ActivityManager{
   }
 
 
-    public function addActivityRequest($dateRequest, $activity, $utility, $nbHours, $idMember){
+    public function addActivity($activityType, $utility, $nbHours, $idMember){
       //
-       $error = new ArrayObject();
+    //   $error = new ArrayObject();
 
 
 
@@ -77,35 +77,35 @@ class ActivityManager{
 // verif date
 
 //$date = ('2020-05-08');
-$datetime = date_create($dateRequest);
-
-$date23 = explode("-", $dateRequest);
+// $datetime = date_create($dateRequest);
+//
+// $date23 = explode("-", $dateRequest);
 //explode pour mettre la date du jour en format numerique: 31/05/2009  -> 31052009
 // echo $date23[0];
 // echo $date23[1];
 // echo $date23[2];
 
-
-	if(strtotime($dateRequest) > time()){
-	   echo 'OK';
-
-     $datemd = $datetime->format('md');
-
-     if(($datemd >= '0415') && ($datemd <= '1015')) {
-     	echo 'Ouvert tous les jours';
-     }
-     else
-     {
-         echo 'Hors-saison ouvert samedi, dimanche et jf';
-         if((check_weekend($datetime) == 1) || jour_ferie(mktime(0,0,0,$date23[1],$date23[2],$date23[0])) == 1){
-     	echo 'Nous sommes un jour férié, samedi ou dimanche !! OK !!';
-         }else{
-           $error->append("dateRequestError");
-         }
-     }
- }else{
-   $error->append("dateRequestError");
-}
+//
+// 	if(strtotime($dateRequest) > time()){
+// 	   echo 'OK';
+//
+//      $datemd = $datetime->format('md');
+//
+//      if(($datemd >= '0415') && ($datemd <= '1015')) {
+//      	echo 'Ouvert tous les jours';
+//      }
+//      else
+//      {
+//          echo 'Hors-saison ouvert samedi, dimanche et jf';
+//          if((check_weekend($datetime) == 1) || jour_ferie(mktime(0,0,0,$date23[1],$date23[2],$date23[0])) == 1){
+//      	echo 'Nous sommes un jour férié, samedi ou dimanche !! OK !!';
+//          }else{
+//            $error->append("dateRequestError");
+//          }
+//      }
+//  }else{
+//    $error->append("dateRequestError");
+// }
 
 //entre le 15 avril et le 15 octobre
 //echo $datetime->format('md');
@@ -125,21 +125,20 @@ $date23 = explode("-", $dateRequest);
 
 
 
-              if (count($error) == 0) {
-                 $error->append($dateRequest);
+        //      if (count($error) == 0) {
+          //       $error->append($dateRequest);
 
-            $this->manager->exec('INSERT INTO activityrequest (dateRequested, utility, nbHours, idActivity, idMember ) VALUES (?,?,?,?,?)', [
-                $dateRequest,
+            $this->manager->exec('INSERT INTO activity (utility, nbHours, idActivityType, idMember ) VALUES (?,?,?,?)', [
                 $utility,
                 $nbHours,
-                $activity,
+                $activityType,
                 $idMember
             ]);
 
             return "ok";
-        }else{
-            return $error;
-        }
+        // }else{
+        //     return $error;
+        //  }
 
     }
 
@@ -155,27 +154,104 @@ $date23 = explode("-", $dateRequest);
         return $randomString;
     }
 
-    public function getActivity(){
-        $found = $this->manager->getAll('SELECT * from activity');
+    public function getActivityType(){
+        $found = $this->manager->getAll('SELECT * from activitytype');
         return $found;
     }
 
-  //  SELECT `idActivityRequest`, `dateRequested`, `booked`, `activity`.`name` FROM `activityrequest` INNER JOIN `activity` ON `activityrequest`.`idActivity` = `activity`.`idActivity`
-  public function getActivityRequest($idMember){
-  //  public function getActivityRequest($idMember){
-      $found = $this->manager->getAll('SELECT idActivityRequest, dateRequested, booked, utility, nbHours, activity.name from activityrequest INNER JOIN activity ON activityrequest.idActivity = activity.idActivity WHERE idMember = ?', [$idMember]);
+  //  SELECT `idActivity`, `dateRequested`, `booked`, `activity`.`name` FROM `activity` INNER JOIN `activity` ON `activity`.`idActivity` = `activity`.`idActivity`
+  public function getActivity($idMember){
+  //  public function getActivity($idMember){
+      $found = $this->manager->getAll('SELECT idActivity, utility, nbHours, activitytype.name from activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType WHERE idMember = ?', [$idMember]);
         return $found;
     }
 
-    public function getActivityRequestAll(){
-        $found = $this->manager->getAll('SELECT idActivityRequest, dateRequested, booked, utility, nbHours, activity.name AS "nameActivity", activity.instructorNeeded, aircrafttype.name AS "nameAircrafttype" from activityrequest INNER JOIN activity ON activityrequest.idActivity = activity.idActivity INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType WHERE booked = 0');
+    public function getActivityAll(){
+    //    $found = $this->manager->getAll('SELECT idActivity, dateBegin, aircraft.utility AS "utility", dateEnd, nbHours, idMember, activitytype.name AS "nameActivityType", activitytype.instructorNeeded, aircrafttype.name AS "nameAircrafttype" from activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType INNER JOIN aircraft ON activity.idAircraft = aircraft.idAircraft INNER JOIN aircrafttype ON aircraft.idAircraftType = aircrafttype.idAircraftType');
+        $found = $this->manager->getAll('SELECT idActivity, idMember, activitytype.name AS "nameActivityType", instructorNeeded, nbHours, utility from activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType WHERE dateBegin IS NULL ORDER BY idActivity DESC');
         return $found;
         // INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType
     }
 
-    public function getActivityRequestAllBooked(){
-      $found = $this->manager->getAll('SELECT idActivityRequest, dateRequested, booked, utility, nbHours, activity.name AS "nameActivity", activity.instructorNeeded, aircrafttype.name AS "nameAircrafttype" from activityrequest INNER JOIN activity ON activityrequest.idActivity = activity.idActivity INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType WHERE booked = 1');
-      return $found;
+    public function getInstructor(){
+        $found = $this->manager->getAll('SELECT * from instructor');
+        return $found;
     }
+
+    public function getAircraft(){
+        $found = $this->manager->getAll('SELECT * from aircraft');
+        return $found;
+    }
+
+    // public function updateActivity($idActivity, $idAircraft, $idInstructor, $dateBegin, $dateEnd){
+     public function updateActivity($idActivity, $dateBegin, $dateEnd){
+      // public function updateActivity($idActivity){
+
+      //  $error = new ArrayObject();
+
+
+  //
+  //
+  // //verif date
+  //
+  // //$date = ('2020-05-08');
+  // $datetime = date_create($dateBegin);
+  //
+  // $date23 = explode("-", $dateBegin);
+  // //explode pour mettre la date du jour en format numerique: 31/07/2020  -> 31052009
+  // echo $date23[0];
+  // echo $date23[1];
+  // echo $date23[2];
+  //
+  //
+  // 	if(strtotime($dateBegin) > time()){
+  // 	   echo 'OK';
+  //
+  //      $datemd = $datetime->format('md');
+  //
+  //      if(($datemd >= '0415') && ($datemd <= '1015')) {
+  //      	echo 'Ouvert tous les jours';
+  //      }
+  //      else
+  //      {
+  //          echo 'Hors-saison ouvert samedi, dimanche et jf';
+  //          if((check_weekend($datetime) == 1) || jour_ferie(mktime(0,0,0,$date23[1],$date23[2],$date23[0])) == 1){
+  //      	echo 'Nous sommes un jour férié, samedi ou dimanche !! OK !!';
+  //          }else{
+  //            $error->append("dateBeginError");
+  //          }
+  //      }
+  //  }else{
+  //    $error->append("dateBeginError");
+  // }
+  //
+  // //entre le 15 avril et le 15 octobre
+  // echo $datetime->format('md');
+  //
+  // //verifier si jour = samedi, dimanche
+  // //6 = Samedi ou 7 = Dimanche
+  //
+  //
+  //
+  //
+  //  echo jour_ferie(mktime(0,0,0,$date23[1],$date23[2],$date23[0]));
+  //
+
+  //fin verif date
+
+    //  if (count($error) == 0) {
+          // $error->append($dateBegin);
+
+        //     $affectedRows = $this->manager->exec("UPDATE activity SET idAircraft = '$idAircraft', idInstructor = '$idInstructor', dateBegin = '$dateBegin', dateEnd = '$dateEnd' WHERE idActivity = '$idActivity'");
+        $affectedRows = $this->manager->exec("UPDATE activity SET dateBegin = '$dateBegin', dateEnd = '$dateEnd' WHERE idActivity = '$idActivity'");
+        // $affectedRows = $this->manager->exec("UPDATE activity SET dateBegin = '20200710' , dateEnd = '202007' WHERE idActivity = '$idActivity'");
+        if($affectedRows === 0){
+              return null;
+        }
+    //  }else{
+        return $error;
+    //  }
+    }
+
 
 }

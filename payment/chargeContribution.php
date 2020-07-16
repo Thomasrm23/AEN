@@ -29,10 +29,10 @@ $customer = \Stripe\Customer::create(array(
 // $manager = new DatabaseManager();
 // $interventionManage = new InterventionManage($manager);
 // $intervention = $interventionManage->getInterventionPay();
+session_start();
 
 $manager = new DataBaseManager();
 $contributionManager = new RegisterMemberManager($manager);
-
 if(isset($_SESSION['idMember'])){
 
     $contribution = $contributionManager->getContribution($_SESSION['idMember']);
@@ -50,13 +50,13 @@ $charge = \Stripe\Charge::create(array(
   "customer" => $customer->id
 ));
 
-// // Customer Data
-// $customerData = [
-//   'id' => $charge->customer
-//   // 'first_name' => $first_name,
+ // Customer Data
+ $customerData = [
+   'id' => $charge->customer,
+    'cardHolder' => $cardHolder,
 //   // 'last_name' => $last_name,
 //   // 'email' => $email
-// ];
+ ];
 //
 // // Instantiate Customer
 // $customerPay = new CustomerPay();
@@ -72,7 +72,8 @@ $paymentData = [
   // 'product' => $charge->description,
   'amount' => $charge->amount,
   'currency' => $charge->currency,
-  'status' => $charge->status
+  'status' => $charge->status,
+  'idMember' => $_SESSION['idMember']
 ];
 
 // Instantiate Transaction
@@ -84,4 +85,5 @@ $paymentContribution->addPaymentContribution($paymentData);
 
 
 // Redirect to success
-header('Location: success.php?tid='.$charge->id.'&product='.$charge->description.'&first_name='.$first_name);
+//header('Location: success.php?tid='.$charge->id.'&product='.$charge->description.'&first_name='.$first_name);
+header('Location: ../html/index.html');

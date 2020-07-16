@@ -21,7 +21,6 @@
 	<link rel="stylesheet" href="../css/jquery-ui.css">
 	<link rel="stylesheet" href="../css/main.css">
 
-
 </head>
 <body>
 
@@ -51,34 +50,20 @@
 					<form class="form-area contact-form text-right" id="myForm" >
 						<div class="row">
 							<div class="col-lg-6 form-group">
-
 								<input name="lastName" placeholder="Nom" id="lastName" class="common-input mb-20 form-control" required="" type="text">
-                <input name="firstName" placeholder="Prénom" id="firstName" class="common-input mb-20 form-control" required="" type="text">
                 <input name="birthDate" placeholder="Date de naissance" id="birthDate" class="common-input mb-20 form-control" required="" type="date">
-
-                <div class="common-input mb-20 form-control" style="text-align:left">
-                  <input name="memberOutside" placeholder="" id="memberOutside" class="common-input mb-20 form-control" type="checkbox"
-                  value="0" onclick="if (this.checked) this.value=1; else this.value=0;">
-                  <label class="common-input mb-20 form-control">"Membre d'un autre club ?"</label>
-                </div>
-
+                <input name="memberOutside" placeholder="" id="memberOutside" class="common-input mb-20 form-control" type="checkbox"
+                  value="0" onclick="showClub()"><label for="memberOutside">"Membre d'un autre club ?"</label>
                 <input name="clubOutside" placeholder="Nom du Club" id="clubOutside" class="common-input mb-20 form-control" type="text">
               </div>
-                              <div class="col-lg-6 form-group">
+              <div class="col-lg-6 form-group">
+                <input name="firstName" placeholder="Prénom" id="firstName" class="common-input mb-20 form-control" required="" type="text">
                 <input name="license" placeholder="N° Licence FFA" id="license" class="common-input mb-20 form-control" type="text">
-
-
                 <input name="email" placeholder="Adresse mail" id="email" class="common-input mb-20 form-control" required="" type="email">
-
                 <input name="login" placeholder="Nom d'utilisateur" id="login" class="common-input mb-20 form-control" required="" type="text">
-
                 <input name="password" placeholder="Mot de passe" id="password" class="common-input mb-20 form-control" required="" type="password">
-
                 <input name="confirmPassword" placeholder="Confirmation de mot de passe" id="confirmPassword" class="common-input mb-20 form-control" required="" type="password">
-
                  <!-- <button onclick="getContribution()" class="genric-btn primary">Calculer ma cotisation</button> -->
-
-
 							</div>
 
               <div class="col-lg-12">
@@ -114,9 +99,23 @@
 
   </script>
 
-
 	<script type="text/javascript">
 
+  document.getElementById("clubOutside").style.display = "none";
+
+  function showClub()
+  {
+    if(document.getElementById('memberOutside').checked)
+    {
+      document.getElementById("memberOutside").value=1;
+      document.getElementById("clubOutside").style.display = "block";
+    }
+    else
+    {
+      document.getElementById("memberOutside").value=0;
+      document.getElementById("clubOutside").style.display = "none";
+    }
+  }
 
     $(function(){
 

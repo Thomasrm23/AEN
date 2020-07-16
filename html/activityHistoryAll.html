@@ -35,39 +35,34 @@
 			<div class="row d-flex align-items-center justify-content-center">
 				<div class="about-content col-lg-12">
 					<h1>
-						Consulter ses activités
+						Planifier les activités
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="activityHistory.html">
-						  Consulter ses activités </a></p>
+						<span class="lnr lnr-arrow-right"></span> <a href="activityHistoryAll.html">
+						  Planifier les activités </a></p>
 				</div>
 			</div>
 		</div>
 	</section>
 	<section class="contact-page-area section-gap">
-    <div class="col-lg-10" style="display: flex; justify-content: center;justify-content: space-around; margin-bottom:10px;">
-      <button onclick="getActivityRequestAll()" class="primary-btn">A traiter
-      </button>
-      <button onclick="getActivityRequestAllBooked()" class="primary-btn">Deja traiter
-      </button>
-    </div>
 		<div class="container">
 			<div class="row justify-content-center">
 
         <div class="table-wrap col-lg-10">
 					<table class="schdule-table table table-bordered">
 						<thead class="thead-light">
-                <th class="head" scope="col">Date de l'activité</th>
-                <th class="head" scope="col">Activités</th>
-                <th class="head" scope="col">Utilisation</th>
-                <th class="head" scope="col">Temps (heures)</th>
-                <th class="head" scope="col">Besoin d'instructeur?</th>
-                <th class="head" scope="col">Type d'engin</th>
-                <th class="head" scope="col">Réservé</th>
+              <th class="head" scope="col">Identifiant activité</th>
+              <th class="head" scope="col">Identifiant membre</th>
+              <th class="head" scope="col">Activités</th>
+              <th class="head" scope="col">Utilisation</th>
+              <th class="head" scope="col">Temps (heures)</th>
+              <th class="head" scope="col">date de début</th>
+              <th class="head" scope="col">date de fin</th>
+              <th class="head" scope="col">Un instructeur ????</th>
+              <th class="head" scope="col">Instructeur</th>
+              <th class="head" scope="col">Engin</th>
 						</thead>
             <tbody class="show-activity-hide">
-            </tbody>
-            <tbody class="show-activity-booked">
             </tbody>
 
 				  </table>
@@ -101,21 +96,19 @@
 
 	<script type="text/javascript">
   window.onload = function go(){
-    getActivityRequestAll();
-//    getActivityRequestAllBooked();
+    getActivityAll();
 };
 
-  function getActivityRequestAll(){
-    var allIntervention;
+  function getActivityAll(){
 
     var options = {
-        url: "../api/activity/getActivityRequestAll.php",
+        url: "../api/activity/getActivityAll.php",
         dataType: "text",
         type: "POST",
 
         success: function( data, status, xhr){
-
-            showActivityRequestAll(JSON.parse(xhr.responseText));
+          //  console.log(JSON.parse(xhr.responseText));
+            showActivityAll(JSON.parse(xhr.responseText));
               },
         error: function(xhr, status, error){
 
@@ -124,76 +117,166 @@
     $.ajax(options);
 }
 
-function showActivityRequestAll(activity){
+function showActivityAll(activity){
 
         let divHide = $('.show-activity-hide');
         let element;
         for(let i = 0; i < Object.keys(activity).length; i++){
-            addActivityRequest(activity[i]);
+            addActivity(activity[i], i);
+
         }
+
     }
 
 
-    function addActivityRequest(activity){
+    function addActivity(activity, n){
+      console.log('ok');
+      console.log(activity);
+      console.log('ok');
      let  element = ' <tr>' +
-      ' <td class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></td>' +
-    ' <td class="col name-activity" id="name-activity-' + activity['nameActivity'] + '" name="' + activity['nameActivity'] + '"> <b>' + activity["nameActivity"] +'</b></td>' +
+    //  ' <td class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></td>' +
+    ' <td class="col idMember-activity" id="idMember-activity-' + activity['idActivity'] + '" name="' + activity['idActivity'] + '"> <b>' + activity["idActivity"] +'</b></td>' +
+    ' <td><input type="number" id="idActivity-' + activity['idActivity'] + '" value="' + activity['idActivity'] + '" readonly></td>' +
+    ' <td class="col idMember-activity" id="idMember-activity-' + activity['idMember'] + '" name="' + activity['idMember'] + '"> <b>' + activity["idMember"] +'</b></td>' +
+    ' <td class="col name-activityType" id="name-activity-type' + activity['nameActivityType'] + '" name="' + activity['nameActivityType'] + '"> <b>' + activity["nameActivityType"] +'</b></td>' +
     ' <td class="col utility-activity" id="utility-activity-' + activity['utility'] + '" name="' + activity['utility'] + '"> <b>' + activity["utility"] +'</b></td>' +
     ' <td class="col nbHours-activity" id="nbHours-activity-' + activity['nbHours'] + '" name="' + activity['nbHours'] + '"> <b>' + activity["nbHours"] +'</b></td>' +
-    ' <td class="col instructorNeeded-activity" id="instructorNeeded-activity-' + activity['instructorNeeded'] + '" name="' + activity['instructorNeeded'] + '"> <b>' + activity["instructorNeeded"] +'</b></td>' +
-    ' <td class="col name-aircrafttype" id="name-aircrafttype' + activity['nameAircrafttype'] + '" name="' + activity['nameAircrafttype'] + '"> <b>' + activity["nameAircrafttype"] +'</b></td>' +
-    ' <td class="col booked-activity" id="booked-activity-' + activity['booked'] + '" name="' + activity['booked'] + '"> <b>' + activity["booked"] +'</b></td>' +
-    ' <td>' +'<input type="button" class="col intervention-activity" href="" onclick="" value="Traiter"></td>' +
+    ' <td><input type="datetime-local" class="dateBegin" name="dateBegin" id="dateBegin"></td>' +
+    ' <td><input type="datetime-local" class="dateEnd" name="dateEnd" id="dateEnd"></td>' +
+    //' <td class="col instructorNeeded-activity" id="instructorNeeded-activity-' + activity['instructorNeeded'] + '" name="' + activity['instructorNeeded'] + '"> <b>' + activity["instructorNeeded"] +'</b></td>' +
+    // ' <td class="col instructorNeeded-activity" id="instructorNeeded-activity-' + activity['instructorNeeded'] + '" name="' + activity['instructorNeeded'] + '"> <b>' + activity["instructorNeeded"] === 1 ? 'OUI' : 'NON' +'</b></td>' +
+    //' <td><select type="text" name="instructor" id="instructorList-'+n+'"><option value="">Choix instructeur</option></select></td>' +
+  //  ' <td><select type="text" name="aircraft" id="aircraftList-' + n + '"><option value="">Choix engin</option></select></td>' +
+//    ' <td class="col booked-activity" id="booked-activity-' + activity['booked'] + '" name="' + activity['booked'] + '"> <b>' + activity["booked"] +'</b></td>' +
+' <td><button class="col validate-activity" id="submit">Valider</button></td>' +
+//' <td><input type="button" class="col intervention-activity" href="" onclick="updateActivity(' + activity['idActivity'] + ')" value="Valider"></td>' +
+//' <td><input type="button" class="col intervention-activity" href="" onclick="updateActivity(' + activity['idActivity'] + ',' + activity['dateBegin'] + ',' + activity['dateEnd'] + ')" value="Valider"></td>' +
+//' <td><input type="button" class="col intervention-activity" href="" onclick="updateActivity(' + activity['idActivity'] + ',' + aircraft[i]['idAircraft'] + ',' + instructor[i]['idInstructor'] + ',' + activity['dateBegin'] + ',' + activity['dateEnd'] + ')" value="Valider"></td>' +
+  ' <td><input type="button" class="col intervention-activity" href="" onclick="" value="Supprimer"></td>' +
 
     ' </tr>'
 
     $('.show-activity-hide').append(element);
+    getInstructor(n);
+
 }
 
-// booked activity
-
-  function getActivityRequestAllBooked(){
-    var allIntervention;
-
-    var options = {
-        url: "../api/activity/getActivityRequestAllBooked.php",
-        dataType: "text",
-        type: "POST",
-
-        success: function( data, status, xhr){
-
-            showActivityRequestAllBooked(JSON.parse(xhr.responseText));
-              },
-        error: function(xhr, status, error){
-
-        }
-    };
-    $.ajax(options);
-}
-
-function showActivityRequestAllBooked(activity){
-
-        let divBooked = $('.show-activity-booked');
-        let element;
-        for(let i = 0; i < Object.keys(activity).length; i++){
-            addActivityRequestBooked(activity[i]);
-        }
-    }
+function getInstructor(n) {
 
 
-    function addActivityRequestBooked(activity){
-     let  element = ' <tr>' +
-      ' <td class="col date-activity" id="date-activity-' + activity['dateRequested'] + '" name="' + activity['dateRequested'] + '"> <b>' + activity["dateRequested"] +'</b></td>' +
-    ' <td class="col name-activity" id="name-activity-' + activity['nameActivity'] + '" name="' + activity['nameActivity'] + '"> <b>' + activity["nameActivity"] +'</b></td>' +
-    ' <td class="col utility-activity" id="utility-activity-' + activity['utility'] + '" name="' + activity['utility'] + '"> <b>' + activity["utility"] +'</b></td>' +
-    ' <td class="col nbHours-activity" id="nbHours-activity-' + activity['nbHours'] + '" name="' + activity['nbHours'] + '"> <b>' + activity["nbHours"] +'</b></td>' +
-    ' <td class="col instructorNeeded-activity" id="instructorNeeded-activity-' + activity['instructorNeeded'] + '" name="' + activity['instructorNeeded'] + '"> <b>' + activity["instructorNeeded"] +'</b></td>' +
-    ' <td class="col name-aircrafttype" id="name-aircrafttype' + activity['nameAircrafttype'] + '" name="' + activity['nameAircrafttype'] + '"> <b>' + activity["nameAircrafttype"] +'</b></td>' +
-    ' <td class="col booked-activity" id="booked-activity-' + activity['booked'] + '" name="' + activity['booked'] + '"> <b>' + activity["booked"] +'</b></td>' +
-    ' </tr>'
+            var option = {
+              url: '../api/activity/getInstructor.php',
+                dataType: "text",
+                type: "POST",
+                data: {},
+                success: function(data, status, xhr){
+                    let instructor = JSON.parse(xhr.responseText);
+                    let optionElement;
+                    for ( let i = 0; i < instructor.length; i++){
+                        optionElement = document.createElement("option");
+                        optionElement.setAttribute( "value", instructor[i]['idInstructor']);
+                        optionElement.innerHTML = instructor[i]['name'];
+                        console.log(instructor);
+                        // switch (n) {
+                        //   case 0:
+                        //     $('#instructorList-0').append(optionElement);
+                        //     break;
+                        //     case 1:
+                        //       $('#instructorList-1').append(optionElement);
+                        //       break;
+                        //       case 2:
+                        //         $('#instructorList-2').append(optionElement);
 
-    $('.show-activity-booked').append(element);
-}
+                        $('#instructorList-'+n+'');
+                    //    $("#instructorList-"[n]).append(optionElement);
+                        console.log(n);
+                      //  }
+                    }
+                  getAircraft(n);
+                },
+                error: function( xhr, status, error ){
+
+                }
+            };
+            $.ajax(option);
+        };
+
+        function getAircraft(n) {
+
+
+                    var option = {
+                      url: '../api/activity/getAircraft.php',
+                        dataType: "text",
+                        type: "POST",
+                        data: {},
+                        success: function(data, status, xhr){
+                            let aircraft = JSON.parse(xhr.responseText);
+                            let optionElement;
+                            for ( let i = 0; i < aircraft.length; i++){
+                                optionElement = document.createElement("option");
+                                optionElement.setAttribute( "value", aircraft[i]['idAircraft']);
+                                optionElement.innerHTML = aircraft[i]['name'];
+                                switch (n) {
+                                  case 0:
+                                    $('#aircraftList-0').append(optionElement);
+                                    break;
+                                    case 1:
+                                      $('#aircraftList-1').append(optionElement);
+                                      break;
+                                      case 2:
+                                        $('#aircraftList-2').append(optionElement);
+                                }
+
+                                console.log();
+                            }
+                        },
+                        error: function( xhr, status, error ){
+
+                        }
+                    };
+                    $.ajax(option);
+                };
+
+                $(function(){
+
+                  // Ecoute de la soumission du formulaire
+                  $(document).on('click','#submit' ,function(event){
+                    event.preventDefault();
+
+                // function updateActivity(idActivity, dateBegin, dateEnd){
+              //  function updateActivity(idActivity, dateBegin, dateEnd){
+                        var data = {
+                          dateBegin: $('#id').val(),
+                            dateBegin: $('#dateBegin').val(),
+                            dateEnd: $('#dateEnd').val()
+                        };
+
+                        $.ajax({
+                            url: "../api/activity/updateActivity.php",
+                            dataType: "text",
+                            type: "POST",
+                            data: { data: JSON.stringify( data ) },
+                            success: function( data, status, xhr ) {
+                                console.log("successss");
+                  //              console.log(JSON.parse(data));
+                          //      console.log(JSON.parse(xhr.responseText));
+
+                                // successAcceptIntervention();
+                                // setTimeout(function(){
+                                //     $('.response-box').html(' ');
+                                // }, 4000);
+
+                            },
+                            error: function( xhr, status, error ) {
+                                console.log("mince");
+                                console.log(JSON.parse(data));
+                                console.log(JSON.parse(xhr.responseText));
+
+                            }
+                        })
+                      })
+                    })
+
 
 
 
