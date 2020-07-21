@@ -11,6 +11,7 @@ require_once __DIR__ . '/../api/models/PaymentContribution.php';
 
   // require_once __DIR__ . '\..\DataBaseManager.php';
 
+session_start();
 
   \Stripe\Stripe::setApiKey('sk_test_43SYZInY9tX2lsg26AKzN2Lf00XPo3OYfF');
 
@@ -29,16 +30,19 @@ $customer = \Stripe\Customer::create(array(
 // $manager = new DatabaseManager();
 // $interventionManage = new InterventionManage($manager);
 // $intervention = $interventionManage->getInterventionPay();
-session_start();
 
 $manager = new DataBaseManager();
-$contributionManager = new RegisterMemberManager($manager);
-if(isset($_SESSION['idMember'])){
+//$contributionManager = new RegisterMemberManager($manager);
 
-    $contribution = $contributionManager->getContribution($_SESSION['idMember']);
+if(isset($_SESSION['contribution'])){
+  $amount = $_SESSION['contribution'];
 }
-$amount = $contribution[0]['feeContribution'];
-echo $amount;
+//
+// if(isset($_SESSION['idMember'])){
+//
+//     $contribution = $contributionManager->getContribution($_SESSION['idMember']);
+// }
+// $amount = $contribution[0]['feeContribution'];
 
 //$amount = $intervention['duration'] * $intervention['price']*100;
 
@@ -85,5 +89,5 @@ $paymentContribution->addPaymentContribution($paymentData);
 
 
 // Redirect to success
-//header('Location: success.php?tid='.$charge->id.'&product='.$charge->description.'&first_name='.$first_name);
-header('Location: ../html/index.html');
+header('Location: ../html/success.php?id='.$charge->id.'&cardHolder='.$cardHolder);
+// header('Location: index.html');

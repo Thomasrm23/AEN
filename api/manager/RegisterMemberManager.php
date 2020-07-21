@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once  __DIR__ . '/../models/Member.php';
 
+session_start();
+
 class RegisterMemberManager{
     private DataBaseManager $manager;
 
@@ -115,9 +117,8 @@ class RegisterMemberManager{
               ]);
 
               $newIdMember = $this->manager->getLastInsertId();
-              session_start();
               $_SESSION['idMember'] = $newIdMember;
-              
+
 
 
             return "ok";

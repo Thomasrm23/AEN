@@ -1,3 +1,13 @@
+<?php
+
+session_start();
+
+if(isset($_SESSION['contribution'])){
+  $amount = $_SESSION['contribution'];
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +50,7 @@
 						Paiement de la cotisation
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="paymentContribution.html">
+						<span class="lnr lnr-arrow-right"></span> <a href="../payment/paymentContribution.php">
 							Paiement de la cotisation</a></p>
 				</div>
 			</div>
@@ -50,12 +60,12 @@
 		<div class="container">
 			<div class="row">
         <div class="col-lg-12 form-group" style="display:flex; justify-content:center">
-          <form action="chargeContribution.php" method="post" id="payment-form">
+          <form action="../payment/chargeContribution.php" method="post" id="payment-form">
             <div class="form-row">
               <div style="display:flex; justify-content:flex-start;">
-                  <h3> Montant :   </h3>
-                  <h3 value="" id="amount"></h3>
-                  <h3>€</h3>
+                  <h3> Montant : <?php echo $amount ?> </h3>
+                  <!-- <h3 value="" id="amount" name="amount"></h3> -->
+                  <h3> €</h3>
 
               </div>
               <input type="text" name="cardHolder" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Titulaire de la carte">
@@ -102,33 +112,6 @@
   <script src="https://js.stripe.com/v3/"></script>
 
   <script src="../js/chargeContribution.js"></script>
-
-
-	<script type="text/javascript">
-
-  window.onload = function() {
-
-    var option = {
-      url: '../api/register/getContribution.php',
-      dataType: "text",
-      type: "POST",
-      success: function(data, status, xhr){
-        let amount = JSON.parse(xhr.responseText);
-        let optionElement;
-          optionElement = document.createElement("option");
-          optionElement.setAttribute( "value", amount[0]['feeContribution']);
-          optionElement.innerHTML = amount[0]['feeContribution'];
-          $('#amount').append(optionElement);
-      },
-      error: function( xhr, status, error ){
-
-      }
-    };
-    $.ajax(option);
-  };
-
-	</script>
-
 
 </body>
 </html>

@@ -19,11 +19,12 @@ session_start();
 $manager = new DataBaseManager();
 $activityManager = new ActivityManager($manager);
 
-$accountManager = new AccountManager($manager);
+// $accountManager = new AccountManager($manager);
 
-if(isset($_SESSION['token'])){
-    $idMemberArray = $accountManager->getIdMemberFromToken($_SESSION['token']);
-    $idMember = $idMemberArray['idMember'];
+if(isset($_SESSION['idMember'])){
+  // $idMemberArray = $accountManager->getIdMemberFromToken($_SESSION['token']);
+  // $idMember = $idMemberArray['idMember'];
+    $idMember = $_SESSION['idMember'];
 }
 else{
     http_response_code(402);

@@ -147,12 +147,12 @@
           data : {data: JSON.stringify(data1)},
           success: function(data, status, xhr){
             console.log(data);
-
-         //   console.log( JSON.stringify(data1));
-           window.location.replace("../payment/paymentContribution.html");
+            console.log( JSON.stringify(data1));
+           window.location.replace("paymentContribution.php");
+        //window.location.replace("index.html");
           },
          error: function(xhr, status, error){
-           //console.log(error);
+           console.log(error);
          //      ;
          //  if(xhr.status != 200){
            //  if(xhr.status == 402){
@@ -163,86 +163,6 @@
         })
       })
     })
-
-
-
-
-// a supprimer
-
-		// function validateRegistration(){
-    //
-		// 	var data1 = {
-		// 		lastName: $('#lastName').val(),
-    //     firstName: $('#firstName').val(),
-    //     birthDate: $('#birthDate').val(),
-    //     memberOutside: $('#memberOutside').val(),
-    //     clubOutside: $('#clubOutside').val(),
-    //     license: $('#license').val(),
-    //     email: $('#email').val(),
-    //     login: $('#login').val(),
-    //     password: $('#password').val(),
-    //     confirmPassword: $('#confirmPassword').val()
-		// 	};
-    //
-    //
-    //
-		// 	var option = {
-		// 		url: '../api/register/registerMember.php',
-		// 		dataType: 'text',
-		// 		type: "POST",
-		// 		data: {data: JSON.stringify(data1)},
-		// 		success: function(data, status, xhr){
-    //         window.location.replace("paymentContribution.php");
-    //   //    console.log( JSON.stringify(data1));
-		// 		},
-		// 		error: function(xhr, status, error){
-    //
-    //       if(xhr.status != 200){
-    //   //    console.log( JSON.stringify(data1));
-    //       console.log('888');
-		// 		//		console.log(xhr.responseText);
-		// 				showError(JSON.parse(xhr.responseText));
-		// 			}
-    //
-		// 		}
-		// 	};
-    //
-		// $.ajax(option);
-		// }
-    //
-    //
-    // function getContribution(){
-    //
-    //   var items = {
-    //     birthDate: $('#birthDate').val(),
-    //     memberOutside: $('#memberOutside').val(),
-    //   }
-    //
-    //   var option = {
-		// 		url: '../api/register/getContribution.php',
-		// 		dataType: 'text',
-		// 		type: "POST",
-		// 		data: {data: JSON.stringify(items)},
-		// 		success: function(data, status, xhr){
-    //       console.log( JSON.stringify(items));
-		// 		},
-		// 		error: function(xhr, status, error){
-    //
-    //       if(xhr.status != 200){
-    //       console.log( JSON.stringify(items));
-    //
-		// 				console.log(xhr.responseText);
-		// 				showError(JSON.parse(xhr.responseText));
-		// 			}
-    //
-		// 		}
-		// 	};
-    //
-		// $.ajax(option);
-		// }
-
-
-
 
 		function showError(error){
     	for(let i = 0; i < Object.keys(error).length; i++){

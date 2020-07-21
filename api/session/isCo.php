@@ -88,8 +88,8 @@ $headerAdmin = "
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
 						<li><a href=\"\">Consulter les commandes</a></li>
-						<li><a href=\"activityHistoryAll.html\">Planifier les activités</a></li>
-						<li><a href=\"planning.html\">Consulter le planning</a></li>
+						<li><a href=\"activityPlan.php\">Planifier les activités</a></li>
+						<li><a href=\"calendar.html\">Consulter le planning</a></li>
 						<li><a href=\"\">Consulter les membres</a></li>
 						<li><a href=\"\">Gérer les ressources</a></li>
 						<li><a href=\"\">Gérer les tables de paramétrages</a></li>
@@ -114,16 +114,31 @@ if(isset($_SESSION['token'])){
 			$type = $accountManager->getTypeFromToken($_SESSION['token']);
 			echo $_SESSION['token'];
 
+			$idUser =  $accountManager->getIdFromToken($_SESSION['token']);
+
+			$_SESSION['idUser'] = $idUser;
+
 
 			switch ($type['type']){
-
+				//client
 				case 1:
+					$idCustomer =  $accountManager->getIdCustomerFromToken($_SESSION['token']);
+					$idCustomer = $idCustomerArray['idMember'];
+					$_SESSION['idCustomer'] = $idCustomer;
 					echo $headerCustomer;
 					break;
+
+				//membre
 				case 2:
+					$idMemberArray =  $accountManager->getIdMemberFromToken($_SESSION['token']);
+					$idMember = $idMemberArray['idMember'];
+					$_SESSION['idMember'] = $idMember;
 					echo $headerMember;
 					break;
+
+				//salarié
 				case 3:
+			 	  $_SESSION['idAmin'] = $idUser;
 					echo $headerAdmin;
 					break;
 			}

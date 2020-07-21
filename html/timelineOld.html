@@ -3,9 +3,11 @@
 <head>
 <meta charset='utf-8' />
 <link href='../api/calendar/main.css' rel='stylesheet' />
+<script src="../jquery/jquery-3.2.1.min.js"></script>
+
 <script src='../api/calendar/main.js'></script>
 
-<script>
+<script type="text/javascript">
 
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
@@ -68,6 +70,33 @@
   });
 
 </script>
+<script >
+//
+// window.onload = function() {
+//
+//   var option = {
+//     url: '../api/calendar/aircraft.php',
+//     dataType: "text",
+//     type: "POST",
+//     success: function(data, status, xhr){
+//       let aircraft = JSON.parse(xhr.responseText);
+//       let optionElement;
+//       for ( let i = 0; i < aircraft.length; i++){
+//         optionElement = document.createElement("option");
+//         optionElement.setAttribute( "value", aircraft[i]['idAircarft']);
+//         optionElement.innerHTML = aircraft[i]['name'];
+//         $('#aircraftList').append(optionElement);
+//       }
+//       //  console.log();
+//     },
+//     error: function( xhr, status, error ){
+//
+//     }
+//   };
+//   $.ajax(option);
+// };
+
+</script>
 <style>
 
   body {
@@ -85,7 +114,9 @@
 </style>
 </head>
 <body>
-
+  <select type="text" class="common-input mb-20 form-control" name="aircraft" id="aircraftList">
+    <option value="">Votre activité</option>
+  </select>
   <div id='calendar'></div>
 
 </body>

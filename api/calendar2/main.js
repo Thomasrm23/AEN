@@ -14141,11 +14141,11 @@ var FullCalendar = (function (exports) {
         borderTopRightRadius: '3px'
     };
     function buildLicenseWarning(context) {
-        var key = context.options.schedulerLicenseKey;
-        if (!isImmuneUrl(window.location.href) && !isValidKey(key)) {
-            return (createElement("div", { className: 'fc-license-message', style: CSS },
-               "pas use a valid license key. ",
-               createElement("a", { href: LICENSE_INFO_URL }, "More Info")));
+        // var key = context.options.schedulerLicenseKey;
+        // if (!isImmuneUrl(window.location.href) && !isValidKey(key)) {
+        //     return (createElement("div", { className: 'fc-license-message', style: CSS },
+        //         "Please use a valid license key. ",
+        //         createElement("a", { href: LICENSE_INFO_URL }, "More Info")));
         }
     }
     /*
