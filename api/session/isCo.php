@@ -64,7 +64,7 @@ $headerMember = "
 				<nav id=\"nav-menu-container\">
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
-						<li><a href=\"activityRequest.php\">Réserver une activité</a></li>
+						<li><a href=\"activityRequest.html\">Réserver une activité</a></li>
 						<li><a href=\"activityHistory.html\">Consulter ses activités</a></li>
 						<li><a href=\"accountMember.php\">Mon compte</a></li>
 

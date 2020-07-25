@@ -7,13 +7,10 @@ require_once  __DIR__ . '/../manager/AccountManager.php';
     header("Access-Control-Allow-Origin: *");
     header('Content-type: application/json');
 
-  // $nbHours = $_POST['nbHours'];
-  //
-  // echo $nbHours;
 
 session_start();
  $json = json_decode($_POST['data'], true);
-
+// echo $json['utility'];
 
 
 $manager = new DataBaseManager();
@@ -31,9 +28,7 @@ else{
     die();
 }
 
-if (isset($json['activity']) &&
-        isset($json['utility']) &&
-            isset($json['nbHours'])){
+if (isset($json['activity'])){
 
 
     $result = $activityManager->addActivity($json['activity'], $json['utility'], $json['nbHours'], $idMember);

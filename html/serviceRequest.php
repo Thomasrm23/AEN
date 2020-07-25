@@ -73,14 +73,13 @@ $serviceList = $serviceManager->getService();
               <form class="form-area contact-form text-right" id="myForm" >
                 <div class="row">
                   <div class="col-lg-6 form-group">
-                    <div style="">
                     <p id="serviceDateP" style="display:flex; margin-bottom:1rem;">Date et heure de passage :</p>
                     <input name="serviceDate" id="serviceDate" style="margin-bottom:1rem;" class="common-input mb-20 form-control" type="datetime-local">
                     <div>
-                    <p id="basedP" style="display:flex; margin-bottom:0;">Votre avion est-il basé à cet aérodrome ?</p>
-                    <div id="based" class="common-input mb-20 form-control" style="display:flex; border: 0px;">
-                      <input name="basedChoice" class="basedChoice" id="basedChoice"  type="radio" value="1"><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="basedChoice">Oui</label><br>
-                      <input name="basedChoice" class="basedChoice" id="notBasedChoice" type="radio" value="2"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="notBasedChoice">Non</label><br>
+                    <p style="display:flex; margin-bottom:0;">Votre avion est-il basé à cet aérodrome ?</p>
+                    <div class="common-input mb-20 form-control" style="display:flex; border: 0px;">
+                      <input name="basedChoice" id="basedChoice"  type="radio" value="1"><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="basedChoice">Oui</label><br>
+                      <input name="basedChoice" id="notBasedChoice" type="radio" value="2"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="notBasedChoice">Non</label><br>
                     </div>
 
                     <div class="common-input mb-20 form-control" style="display:flex;">
@@ -99,30 +98,30 @@ $serviceList = $serviceManager->getService();
                       <input name="markupDuration" placeholder="Durée de marquage (unité de 30 minutes)" id="markupDuration" class="common-input mb-20 form-control" type="text">
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
-                      <input name="provisioning" placeholder="" id="provisioning" type="checkbox"
+                        <input name="provisioning" placeholder="" id="provisioning" type="checkbox"
                         value="0" onclick="showProvisioning()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="provisioning"><?php echo $serviceList[1]['name']?></label>
-                    </div>
+                      </div>
                       <input name="provisioning1" placeholder="champ 1" id="provisioning1" class="common-input mb-20 form-control" type="text">
                       <input name="provisioning2" placeholder="champ 2" id="provisioning2" class="common-input mb-20 form-control" type="text">
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                       <input name="parking" placeholder="" id="parking" type="checkbox"
                         value="0" onclick="showParking()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="parking"><?php echo $serviceList[2]['name']?></label>
-                    </div>
+                      </div>
                       <input name="parking1" placeholder="champ 1" id="parking1" class="common-input mb-20 form-control" type="text">
                       <input name="parking2" placeholder="champ 2" id="parking2" class="common-input mb-20 form-control" type="text">
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                       <input name="cleaning" placeholder="" id="cleaning" type="checkbox"
                         value="0" onclick="showCleaning()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="cleaning"><?php echo $serviceList[3]['name']?></label>
-                    </div>
+                      </div>
                       <input name="cleaning1" placeholder="champ 1" id="cleaning1" class="common-input mb-20 form-control" type="text">
                       <input name="cleaning2" placeholder="champ 2" id="cleaning2" class="common-input mb-20 form-control" type="text">
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                       <input name="weather" placeholder="" id="weather" type="checkbox"
                         value="0" onclick="showWeather()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="weather"><?php echo $serviceList[4]['name']?></label>
-                    </div>
+                      </div>
                       <input name="weather1" placeholder="champ 1" id="weather1" class="common-input mb-20 form-control" type="text">
                       <input name="weather2" placeholder="champ 2" id="weather2" class="common-input mb-20 form-control" type="text">
 
@@ -133,11 +132,12 @@ $serviceList = $serviceManager->getService();
                       <option value="VOYAGE">VOYAGE</option>
                     </select> -->
 
-                  </div>
+                    </div>
 
-                  <div class="col-lg-12">
+                    <div class="col-lg-12">
                     <!-- <button onclick="validateRequest()" class="genric-btn primary" style="float: right;">Valider</button> -->
                     <button class="genric-btn primary" id="submit" style="float: right;">Valider la commande</button>
+                    </div>
                   </div>
                 </div>
               </form>
@@ -173,27 +173,8 @@ $serviceList = $serviceManager->getService();
 
 
 
-
-      // let basedChoice;
-      //
-      //
-      // if (document.getElementById('basedChoice').checked) {
-      //   console.log("check 1");
-      //   basedChoice = document.getElementById('basedChoice').value;
-      // }
-      // if (document.getElementById('notBasedChoice').checked) {
-      //   console.log("check 2");
-      //
-      //   basedChoice = document.getElementById('notBasedChoice').value;
-      // }
-      // console.log(basedChoice);
-
-
-
       document.getElementById("planeType").style.display = "none";
       document.getElementById("planeTypeP").style.display = "none";
-      // document.getElementById("based").style.display = "none";
-      // document.getElementById("basedP").style.display = "none";
       document.getElementById("markupDuration").style.display = "none";
 
       document.getElementById("provisioning1").style.display = "none";
@@ -219,9 +200,8 @@ $serviceList = $serviceManager->getService();
           basedChoice = document.getElementById('notBasedChoice').value;
         }
          return basedChoice;
-        // console.log("based :");
-        // console.log(basedChoice);
       }
+
       function getPlaneType(){
 
         var planetype;
@@ -232,8 +212,6 @@ $serviceList = $serviceManager->getService();
           planetype = document.getElementById('reacteur').value;
         }
          return planetype;
-        // console.log("planetype :");
-        // console.log(planetype);
       }
 
       function showLanding(){
@@ -242,9 +220,7 @@ $serviceList = $serviceManager->getService();
           document.getElementById("planeType").style.display = "flex";
           document.getElementById("planeTypeP").style.display = "flex";
           document.getElementById("markupDuration").style.display = "block";
-          //
-          // var selectedOption = $("input:radio[name=planeType]:checked").val();
-          // console.log(selectedOption);
+
 
         } else {
           document.getElementById("landing").value=0;

@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../api/pdo.php';
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once  __DIR__ . '/../models/Member.php';
 
+// header('Content-type: application/json');
+
 class RegisterMemberManager{
     private DataBaseManager $manager;
 
@@ -63,7 +65,7 @@ class RegisterMemberManager{
       }
 
       public function getAccountMember($idMember){
-        $found = $this->manager->getAll("SELECT idMember, firstName, lastName, login, password, login, password, email,
+        $found = $this->manager->getAll("SELECT idMember, firstName, lastName, address, postalCode, city, phoneNumber, login, password, login, password, email,
           birthDate, memberOutside, clubOutside, license,
           (CASE
             WHEN (YEAR(contributionDate) = YEAR(NOW())) THEN 'OUI'
@@ -77,7 +79,7 @@ class RegisterMemberManager{
 
       public function getAccountAdmin(){
         $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-        $query = "SELECT idMember, firstName, lastName, login, password, login, password, email,
+        $query = "SELECT idMember, firstName, lastName, address, postalCode, city, phoneNumber, login, password, login, password, email,
           birthDate, (CASE WHEN memberOutside = 1 THEN 'OUI' ELSE 'NON' END) as 'memberOutside', clubOutside, license,
           (case
             WHEN (YEAR(contributionDate) = YEAR(NOW())) THEN 'OUI'
@@ -90,43 +92,45 @@ class RegisterMemberManager{
       }
 
       public function deleteMember($idMember){
+          $idUser = $this->manager->getAll("SELECT idUser from member WHERE idMember = $idMember");
           $delete = $this->manager->exec("DELETE FROM member WHERE idMember = $idMember");
-
-          if($delete === 0) {
-            $error->append("ErreurDelete");
+          if($delete == 0) {
+            $error = "ErreurDeleteMember";
             return $error;
           } else {
-            return "ok";
+              $delete = $this->manager->exec("DELETE FROM user WHERE idUser = $idUser");
+              if($delete == 0) {
+                $error = "ErreurDeleteUser";
+                return $error;
+              } else {
+                return "ok";
+              }
           }
       }
 
 
     public function updateContributionDate($idMember, $dateContribution){
-        $this->manager->exec("UPDATE member
+        $update = $this->manager->exec("UPDATE member
         SET contributionDate = '" . $dateContribution . "'
         WHERE idMember = $idMember");
-
         if($update == 0) {
-          $error->append("ErreurUpdateMember");
+          $error = "ErreurUpdateContributionDate";
           return $error;
         } else {
           return "ok";
         }
       }
 
-      public function register($idUser, $idMember, $lastName, $firstName, $birthDate, $memberOutside, $clubOutside, $license, $email, $login, $password, $confirmPassword){
+      public function register($idUser, $idMember, $lastName, $firstName, $address, $postalCode, $city, $phoneNumber, $birthDate, $memberOutside, $clubOutside, $license, $email, $login, $password, $confirmPassword){
 
         // Initialisation du nombre d'erreurs
         $error = new ArrayObject();
 
-        // Si nouveau membre, verifier si email et login non déjà existant
-        if($idMember == 0) {
-          if ($this->ifExistEmail($email)){
-              $error->append("emailExist");
-          }
-          if ($this->ifExistLogin($login)){
-              $error->append("LoginExist");
-          }
+        if ($this->ifExistEmail($email)){
+            $error->append("emailExist");
+        }
+        if ($this->ifExistLogin($login)){
+            $error->append("LoginExist");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
@@ -154,6 +158,8 @@ class RegisterMemberManager{
                 $error->append("tooYoung");
             }
 
+        } else {
+          $error->append("dateInvalid");
         }
 
         if (preg_match('/\A(?=[\x20-\x7E]*?[A-Z])(?=[\x20-\x7E]*?[a-z])(?=[\x20-\x7E]*?[0-9])[\x20-\x7E]{6,}\z/', $password) != 1){
@@ -180,7 +186,7 @@ class RegisterMemberManager{
             if($idMember > 0) {
 
             // Update member
-            $this->manager->exec('UPDATE member
+            $update = $this->manager->exec('UPDATE member
               SET birthDate = $birthDate, memberOutside = $memberOutside, clubOutside = $clubOutside,
               license = $license, idMemberContribution, typeContribution = $typeContribution
               WHERE idMember = $idMember');
@@ -191,9 +197,10 @@ class RegisterMemberManager{
               } else {
 
                 // Update user
-                $this->manager->exec('UPDATE user
-                  SET lastName = (string)$lastName, firstName = (string)$firstName, email = (string)$email,
-                  login = (string)$login, password = (string)$passwordSha
+                $update = $this->manager->exec('UPDATE user
+                  SET lastName = (string)$lastName, firstName = (string)$firstName,address, postalCode, city, phoneNumber,
+                  address = (string)$address, postalCode = (string)$postalCode, city = (string)$city, phoneNumber = (string)$phoneNumber,
+                  email = (string)$email, login = (string)$login, password = (string)$passwordSha
                   WHERE idUser = $idUser');
                 if($update == 0) {
                   $error->append("ErreurUpdateUser");
@@ -207,7 +214,7 @@ class RegisterMemberManager{
             } else {
 
             // Insert User
-            $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password, type) VALUES (?,?,?,?,?,?)', [
+            $insert = $this->manager->exec('INSERT INTO user (lastName, firstName, address, postalCode, city, phoneNumber, email, login, password, type) VALUES (?,?,?,?,?,?,?,?,?,?)', [
                 (string)$lastName,
                 (string)$firstName,
                 (string)$email,
@@ -216,31 +223,42 @@ class RegisterMemberManager{
                 2
             ]);
 
-            $newId = $this->manager->getLastInsertId();
+            if($insert == 0) {
+              $error->append("ErreurInsertUser");
+              return $error;
+              } else {
 
-            // Insert Member
-            $this->manager->exec('INSERT INTO member (birthDate, memberOutside, clubOutside, license, contributionPayed, idUser, idMemberContribution) VALUES (?,?,?,?,?,?,?)', [
-                  $birthDate,
-                  $memberOutside,
-                  $clubOutside,
-                  $license,
-                  0,
-                  $newId,
-                  $typeContribution
-              ]);
+              $newId = $this->manager->getLastInsertId();
 
+              // Insert Member
+              $insert = $this->manager->exec('INSERT INTO member (birthDate, memberOutside, clubOutside, license, contributionPayed, idUser, idMemberContribution) VALUES (?,?,?,?,?,?,?)', [
+                    $birthDate,
+                    $memberOutside,
+                    $clubOutside,
+                    $license,
+                    0,
+                    $newId,
+                    $typeContribution
+                ]);
+                if($insert == 0) {
+                  $error->append("ErreurInsertMember");
+                  return $error;
+                } else {
+                return "ok";
+                }
+              }
+
+              // Passage de l'identifiant membre en variable de session pour le paiement
               $newIdMember = $this->manager->getLastInsertId();
               session_start();
               $_SESSION['idMember'] = $newIdMember;
-
-              return "ok";
 
             // Fin if($idMember > 0)
             }
 
           // Fin if (count($error) != 0)
           } else {
-              return $error;
+             return $error;
           }
     }
 

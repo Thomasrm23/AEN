@@ -5,9 +5,6 @@ require_once __DIR__ . '/../api/manager/RegisterMemberManager.php';
 
 header("Access-Control-Allow-Origin: *");
 
-// Connect to database
-$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-
 // Mise en place de la connexion
 $manager = new DataBaseManager();
 // Recuperation des donnees de tous les membres
@@ -37,7 +34,7 @@ $account = $registerMember->getAccountAdmin();
 <body>
 	<header id="header">
 	</header>
-  <form name="frmAccountAdmin" method="" action="">
+  <form name="frmAccountAdmin" method="post" action="">
 	<section class="banner-area relative about-banner" id="home">
 		<img class="cta-img img-fluid" src="img/cta-img.png" alt="">
 		<div class="overlay overlay-bg"></div>
@@ -63,6 +60,10 @@ $account = $registerMember->getAccountAdmin();
               <th></th>
               <th class="head" scope="col">Nom</th>
               <th class="head" scope="col">Prénom</th>
+              <th class="head" scope="col">Adresse</th>
+              <th class="head" scope="col">Code Postal</th>
+              <th class="head" scope="col">Ville</th>
+              <th class="head" scope="col">Téléphone</th>
               <th class="head" scope="col">Date de naissance</th>
               <th class="head" scope="col">Adresse mail</th>
               <th class="head" scope="col">Cotisation à jour</th>
@@ -80,13 +81,16 @@ $account = $registerMember->getAccountAdmin();
                 $classname="oddRow";
               ?>
               <tr class="<?php if(isset($classname)) echo $classname;?>">
-              <td><input type="radio" name="memberChecked" id="idMember" value="<?php echo $row["idMember"]; ?>" ></td>
-              <td><?php echo $row["idMember"]; ?></td>
-              <td><?php echo $row["lastName"]; ?></td>
+              <td><input type="radio" name="memberChecked" id="memberChecked" value="<?php echo $row["idMember"]; ?>" ></td>
+              <td ><?php echo $row["lastName"]; ?></td>
               <td><?php echo $row["firstName"]; ?></td>
+              <td><?php echo $row["address"]; ?></td>
+              <td><?php echo $row["postalCode"]; ?></td>
+              <td><?php echo $row["city"]; ?></td>
+              <td><?php echo $row["phoneNumber"]; ?></td>
               <td><?php echo $row["birthDate"]; ?></td>
               <td><?php echo $row["email"]; ?></td>
-              <td><?php echo $row["contributionPayed"]; ?></td>
+              <td <?php if($row["contributionPayed"] == "NON") $color="red"; else $color="#777777"; ?> style="color:<?php echo $color; ?>" ><?php echo $row["contributionPayed"]; ?></td>
               <td><?php echo $row["contributionDate"]; ?></td>
               <td><?php echo $row["license"]; ?></td>
               <td><?php echo $row["memberOutside"]; ?></td>
@@ -94,7 +98,6 @@ $account = $registerMember->getAccountAdmin();
               </tr>
               <?php
               $i++;
-              echo $i;
               }
               ?>
 				  </table>
@@ -102,7 +105,7 @@ $account = $registerMember->getAccountAdmin();
       </div>
         <div class="row justify-content-center">
           <td>
-            <button type="button" name="buttonDelete" id="buttonDelete">Supprimer</td>
+            <button type="submit" name="buttonDelete" id="buttonDelete" onclick="setDeleteAction()">Supprimer</td>
             <button type="button" name="buttonQuit" id="buttonQuit">Quitter</button>
         </div>
 		</div>
@@ -126,34 +129,26 @@ $account = $registerMember->getAccountAdmin();
  <script src="../js/isCo.js"></script>
  <script type="text/javascript">
 
- $(function(){
+function setDeleteAction() {
+   if(confirm("Voulez-vous vraiment supprimer ce membre ?")) {
+     document.frmAccountAdmin.action = "../api/register/deleteMember.php";
+     document.frmAccountAdmin.submit();
+   }
+ }
 
-   // Clic sur Supprimer du formulaire
-   $(document).on('click','#buttonDelete', function(event){
-
-     event.preventDefault();
-
-     var data1 = {
-       idMember: $('#idMember').val(),
-     };
-
-     $.ajax({
-       url: '../api/register/deleteMember.php',
-       dataType: 'text',
-       method: "POST",
-       data : {data: JSON.stringify(data1)},
-       success: function(data, status, xhr){
-         console.log(data1);
-         window.location.replace("accountAdmin.php");
-       },
-      error: function(xhr, status, error){
-          console.log(xhr.responseText);
-          // showError(JSON.parse(xhr.responseText));
-          window.location.replace("accountAdmin.php");
-      }
-     })
-    })
- })
+ // window.onload = function() {
+ //
+ //   // Afficher en rouge "NON" si contribution non payee
+ //   if(document.getElementById("contributionPayed").value = "NON")
+ //   {
+ //     document.getElementById("contributionPayed").style.color="red";
+ //   }
+ //   else
+ //   {
+ //     document.getElementById("contributionPayed").style.color="#777777";
+ //   }
+ //
+ // };
 
  </script>
 </form>

@@ -12,9 +12,24 @@ function function_alert($message) {
     echo "<script>alert('$message');</script>";
 }
 
+// Connect to database
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
 // Verifier si une ligne est cochee
 if(isset($_POST["activityChecked"])){
   $idActivity = $_POST["activityChecked"];
+  // Requete pour recuperer les activites
+  // $querySelect = "SELECT idActivity, activitytype.name AS 'nameActivityType',
+  // activity.idMember as 'idMember', concat(lastname,' ',firstname) as 'userName',
+  // nbHours, utility, case when instructorNeeded = 1 then 'OUI' else 'NON' END as 'instructorNeeded',
+  // idInstructor, idAircraft, dateBegin, dateEnd
+  // from activity
+  // INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType
+  // INNER JOIN member ON activity.idMember = member.idMember
+  // INNER JOIN user ON member.idUser = user.idUser
+  // WHERE idActivity='" . $_POST["activityChecked"] . "'";
+  // $result = mysqli_query($link, $querySelect);
+  // $row= mysqli_fetch_array($result);
   $manager = new DatabaseManager();
   $activityManager = new ActivityManager($manager);
   $row = $activityManager->getActivityToEdit($idActivity);
@@ -82,7 +97,7 @@ else {
   						</thead>
               </tr>
               <td><input type="hidden" name="idActivity" id="idActivity" class="number" value="<?php echo $row['idActivity']; ?>"><?php echo $row["nameActivityType"]; ?></td>
-              <td ><?php echo $row["idMember"]; ?></td>
+              <td><?php echo $row["idMember"]; ?></td>
               <td><?php echo $row["userName"]; ?></td>
               <td><?php echo $row["nbHours"]; ?></td>
               <td><?php echo $row["utility"]; ?></td>
@@ -90,15 +105,38 @@ else {
               <tr>
               <td><label>Instructeur</label></td>
               <td>
-                <select type="text" name="idInstructor" id="idInstructor">
+                <select name="idInstructor" id="idInstructor">
+                  <?php
+                  $queryInstructor = mysqli_query($link, "SELECT * FROM instructor");
+                  $k=0;
+                  ?>
                   <option value="">Votre choix</option>
+                  <?php
+                  while($instructors = mysqli_fetch_array($queryInstructor)) {
+                    ?>
+                    <option value="<?=$instructors["idInstructor"];?>"><?=$instructors["name"];?></option>
+                    <?php
+                  }
+                  ?>
                 </select>
               </tr>
               <tr>
               <td><label>Engin</label></td>
               <td>
-                <select type="text" name="idAircraft" id="idAircraft">
+                <select name="idAircraft" id="idAircraft">
+                  <?php
+                  $queryAircraft = mysqli_query($link, "SELECT * FROM Aircraft");
+                  $l=0;
+                  ?>
                   <option value="">Votre choix</option>
+                  <?php
+                  while($aircrafts = mysqli_fetch_array($queryAircraft)) {
+                    ?>
+                    <option value="<?=$aircrafts["idAircraft"];?>"><?=$aircrafts["name"];?></option>
+                    <?php
+                    $l++;
+                  }
+                  ?>
                 </select>
               </tr>
               <tr>
@@ -110,11 +148,12 @@ else {
               <td><input type="datetime-local" name="dateEnd" id="dateEnd" value="<?php echo $row['dateEnd']; ?>"></td>
               </tr>
               </table>
+            </div>
+
     			  </div>
-          </div>
             <div class="row justify-content-center">
                 <button type="button" name="buttonSubmit" id="buttonSubmit">Valider</button>
-                <button type="button" name="buttonQuit" id="buttonQuit">Quitter</button>
+                <button type="button" name="buttonCancel" id="buttonCancel">Annuler</button>
             </div>
     		</div>
     	</section>
@@ -137,52 +176,6 @@ else {
       <script src="../js/main.js"></script>
       <script src="../js/isCo.js"></script>
       <script type="text/javascript">
-
-      window.onload = function() {
-
-        var option = {
-          url: '../api/activity/getInstructor.php',
-          dataType: "text",
-          type: "POST",
-          success: function(data, status, xhr){
-            let instructor = JSON.parse(xhr.responseText);
-            let optionElement;
-            for ( let i = 0; i < instructor.length; i++){
-              optionElement = document.createElement("option");
-              optionElement.setAttribute( "value", instructor[i]['idInstructor']);
-              optionElement.innerHTML = instructor[i]['name'];
-              $('#idInstructor').append(optionElement);
-            }
-            //  console.log();
-          },
-          error: function( xhr, status, error ){
-
-          }
-        };
-        $.ajax(option);
-
-        var option = {
-          url: '../api/activity/getAircraft.php',
-          dataType: "text",
-          type: "POST",
-          success: function(data, status, xhr){
-            let aircraft = JSON.parse(xhr.responseText);
-            let optionElement;
-            for ( let i = 0; i < aircraft.length; i++){
-              optionElement = document.createElement("option");
-              optionElement.setAttribute( "value", aircraft[i]['idAircraft']);
-              optionElement.innerHTML = aircraft[i]['name'];
-              $('#idAircraft').append(optionElement);
-            }
-            //  console.log();
-          },
-          error: function( xhr, status, error ){
-
-          }
-        };
-        $.ajax(option);
-
-      };
 
        $(function(){
 
@@ -213,14 +206,14 @@ else {
                console.log(data1);
 
                // showError(JSON.parse(xhr.responseText));
-               window.location.replace("activityEdit.php");
+              window.location.replace("activityEdit.php");
            }
           })
          })
 
         // Clic sur Annuler du formulaire
-        $(document).on('click','#buttonQuit',function(){
-          window.location.replace("activityPlan.php");
+        $(document).on('click','#buttonCancel' ,function(event){
+           window.location.replace("activityPlan.php");
         })
 
       })

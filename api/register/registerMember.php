@@ -4,7 +4,7 @@ require_once __DIR__ . '/../DataBaseManager.php';
 require_once __DIR__ . '/../manager/RegisterMemberManager.php';
 
   //  header("Access-Control-Allow-Origin: *");
-  //  header('Content-type: application/json');
+header('Content-type: application/json');
 
 
 $json = json_decode($_POST['data'], true);
@@ -12,6 +12,10 @@ $json = json_decode($_POST['data'], true);
 
 if (isset($json['lastName']) &&
     isset($json['firstName']) &&
+    isset($json['address']) &&
+    isset($json['postalCode']) &&
+    isset($json['city']) &&
+    isset($json['phoneNumber']) &&
     isset($json['birthDate']) &&
     isset($json['memberOutside']) &&
     isset($json['clubOutside']) &&
@@ -25,39 +29,38 @@ if (isset($json['lastName']) &&
     $manager = new DataBaseManager();
     $registerMember = new RegisterMemberManager($manager);
 
-    // $result = $registerMember->register($json['lastName'],
-    //     $json['firstName'],
-    //     $json['birthDate'],
-    //     $json['memberOutside'],
-    //     $json['clubOutside'],
-    //     $json['license'],
-    //     $json['email'],
-    //     $json['login'],
-    //     $json['password'],
-    //     $json['confirmPassword']);
+    $result = $registerMember->register(
+        0,
+        0,
+        $json['lastName'],
+        $json['firstName'],
+        $json['address'],
+        $json['postalCode'],
+        $json['city'],
+        $json['phoneNumber'],
+        $json['birthDate'],
+        $json['memberOutside'],
+        $json['clubOutside'],
+        $json['license'],
+        $json['email'],
+        $json['login'],
+        $json['password'],
+        $json['confirmPassword']);
 
-        $result = $registerMember->register(
-                0,
-                0,
-                $json['lastName'],
-                $json['firstName'],
-                $json['birthDate'],
-                $json['memberOutside'],
-                $json['clubOutside'],
-                $json['license'],
-                $json['email'],
-                $json['login'],
-                $json['password'],
-                $json['confirmPassword']);
 
 
     if($result == "ok"){
-          // repasser l'amount vers la page de payment
-          // if(isset($_SESSION['idMember'])){
-          //   $contribution = $registerMember->getContribution($_SESSION['idMember']);
-          //   $_SESSION['contribution'] = $contribution[0]['feeContribution'];
-          }
 
+      // repasser l'amount vers la page de payment
+      $contribution = $registerMember->getContribution($_SESSION['idMember']);
+      $_SESSION['contribution'] = $contribution;
+
+      // if (checkdate($json['birthDate']->format('m'), $json['birthDate']->format('d'), $json['birthDate']->format('Y'))){
+      //   if ($contribution != null) {
+      //       echo json_encode($contribution);
+      //   }
+
+    //  }
         http_response_code(200);
         die();
     }

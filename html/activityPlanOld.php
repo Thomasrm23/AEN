@@ -1,15 +1,20 @@
 <?php
 require_once __DIR__ . '/../api/pdo.php';
-require_once __DIR__ . '/../api/DataBaseManager.php';
-require_once __DIR__ . '/../api/manager/ActivityManager.php';
-
 header("Access-Control-Allow-Origin: *");
 
-// Mise en place de la connexion
-$manager = new DataBaseManager();
-// Recuperation des donnees de tous les membres
-$activityManager = new ActivityManager($manager);
-$result = $activityManager->getActivityToPlan();
+// Connect to database
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+// Requete pour recuperer les activites
+$query = "SELECT idActivity, activitytype.name AS 'nameActivityType',
+activity.idMember as 'idMember', concat(lastname,' ',firstname) as 'userName',
+nbHours, utility, case when instructorNeeded = 1 then 'OUI' else 'NON' END as 'instructorNeeded'
+from activity
+INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType
+INNER JOIN member ON activity.idMember = member.idMember
+INNER JOIN user ON member.idUser = user.idUser
+WHERE dateBegin IS NULL ORDER BY idActivity";
+$result = mysqli_query($link, $query);
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +39,7 @@ $result = $activityManager->getActivityToPlan();
 <body>
 	<header id="header">
 	</header>
-  <form name="frmActivityPlan" method="post" action="">
+  <form name="frmShowActivity" method="post" action="activityEdit.php">
 	<section class="banner-area relative about-banner" id="home">
 		<img class="cta-img img-fluid" src="img/cta-img.png" alt="">
 		<div class="overlay overlay-bg"></div>
@@ -92,8 +97,8 @@ $result = $activityManager->getActivityToPlan();
 
         <div class="row justify-content-center" >
 
-            <button class="genric-btn primary" type="submit" name="buttonUpdate" id="buttonUpdate" onClick="setUpdateAction()">Mettre à jour</button>
-            <button class="genric-btn primary" type="submit" name="buttonDelete" id="buttonDelete" onClick="setDeleteAction()">Supprimer
+            <button class="genric-btn primary" type="submit" name="buttonUpdate" id="buttonUpdate">Mettre à jour</button>
+            <button class="genric-btn primary" type="button" name="buttonDelete" id="buttonDelete">Supprimer
 		</div>
 	</section>
 	<footer>
@@ -115,18 +120,35 @@ $result = $activityManager->getActivityToPlan();
  <script src="../js/isCo.js"></script>
  <script type="text/javascript">
 
- function setDeleteAction() {
-    if(confirm("Voulez-vous vraiment supprimer cette activité ?")) {
-      document.frmActivityPlan.action = "../api/activity/deleteActivity.php";
-      document.frmActivityPlan.submit();
-    }
-  }
+ $(function(){
 
-  function setUpdateAction() {
-      document.frmActivityPlan.action = "activityEdit.php";
-      document.frmActivityPlan.submit();
-   }
+   // Clic sur Supprimer du formulaire
+   $(document).on('click','#buttonDelete', function(event){
 
+     event.preventDefault();
+
+     var data1 = {
+       idActivity: $('#idActivity').val(),
+     };
+
+     $.ajax({
+       url: '../api/activity/deleteActivity.php',
+       dataType: 'text',
+       method: "POST",
+       data : {data: JSON.stringify(data1)},
+       success: function(data, status, xhr){
+      //   console.log(data1);
+         window.location.replace("activityPlan.php");
+       },
+      error: function(xhr, status, error){
+          console.log(xhr.responseText);
+          showError(JSON.parse(xhr.responseText));
+          window.location.replace("activityEdit.php");
+      }
+     })
+    })
+
+ })
  </script>
 </form>
 </body>

@@ -51,12 +51,6 @@
 						<div class="row">
 							<div class="col-lg-6 form-group">
 								<input name="lastName" placeholder="Nom" id="lastName" class="common-input mb-20 form-control" required="" type="text">
-                <div style="display: none; color: #f55;" id="lastNameError"></div>
-                <input name="address" placeholder="Addresse" id="address" class="common-input mb-20 form-control" required="" type="text">
-                <input name="zipcode" placeholder="Code Postal" id="zipcode" class="common-input mb-20 form-control" required="" type="text">
-                <div style="display: none; color: #f55;" id="error-message"></div>
-                <select name="city" placeholder="Ville" id="city" class="common-input mb-20 form-control" required="" type="text">
-                <input name="phoneNumber" placeholder="Téléphone" id="phoneNumber" class="common-input mb-20 form-control" required="" type="text">
                 <input name="birthDate" placeholder="Date de naissance" id="birthDate" class="common-input mb-20 form-control" required="" type="date">
                 <input name="memberOutside" placeholder="" id="memberOutside" class="common-input mb-20 form-control" type="checkbox"
                   value="0" onclick="showClub()"><label for="memberOutside">"Membre d'un autre club ?"</label>
@@ -100,10 +94,10 @@
 	<script src="../js/jquery.nice-select.min.js"></script>
 	<script src="../js/owl.carousel.min.js"></script>
  	<script src="../js/main.js"></script>
-  <script src="../js/isCo.js"></script>
 
-  <!-- Script pour rechercher la ville en fonction du code postal -->
-  <script src="scriptZipcode.js"></script>
+  <script src="../js/isCo.js">
+
+  </script>
 
 	<script type="text/javascript">
 
@@ -129,13 +123,12 @@
       $(document).on('click','#submit' ,function(event){
         event.preventDefault();
 
+    //    alert('test de click du bouton');
+        //var lastName = $('#lastName').val();
+
         var data1 = {
           lastName: $('#lastName').val(),
           firstName: $('#firstName').val(),
-          address: $('#address').val(),
-          postalCode: $('#zipcode').val(),
-          city: $('#city').val(),
-          phoneNumber: $('#phoneNumber').val(),
           birthDate: $('#birthDate').val(),
           memberOutside: $('#memberOutside').val(),
           clubOutside: $('#clubOutside').val(),
@@ -154,13 +147,18 @@
           data : {data: JSON.stringify(data1)},
           success: function(data, status, xhr){
             console.log(data);
-
-         //   console.log( JSON.stringify(data1));
-           window.location.replace("../html/paymentContribution.php");
+            console.log( JSON.stringify(data1));
+           window.location.replace("paymentContribution.php");
+        //window.location.replace("index.html");
           },
          error: function(xhr, status, error){
+           console.log(error);
+         //      ;
+         //  if(xhr.status != 200){
+           //  if(xhr.status == 402){
              console.log(xhr.responseText);
              showError(JSON.parse(xhr.responseText));
+         //			}
          }
         })
       })
@@ -173,8 +171,7 @@
     				$('#firstNameError').show();
 					break;
 				case 'lastNameError':
-          $('#lastNameError').text('NOM INCORRECT.').show();
-
+					$('#lastNameError').show();
 					break;
         case 'birthDateError':
 					$('#birthDateError').show();

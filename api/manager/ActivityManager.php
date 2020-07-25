@@ -66,26 +66,67 @@ class ActivityManager{
     return $EstFerie;
   }
 
+    public function ifExistActivity($idAircraft, $idInstructor, $dateBegin, $dateEnd){
+      // Initialisation du nombre d'erreurs
+      $error = new ArrayObject();
+
+      // Conversion des dates en chaines de caracteres
+      $dateBeginTime = date("Y-m-d H:i:s",strtotime($dateBegin));
+      $dateEndTime = date("Y-m-d H:i:s",strtotime($dateEnd));
+
+      // Verifier si chevauchement des dates avec un créneau existant pour l'instructeur choisi
+      $foundInstructor = $this->manager->find("SELECT idActivity
+        FROM activity
+        WHERE ((dateBegin BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
+        OR (dateEnd BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
+        OR ('" . $dateBeginStr . "' BETWEEN dateBegin AND dateEnd))
+        AND idInstructor = ?', [$idInstructor]");
+
+      if($foundInstructor !== null){
+        $error->append("Attention ! L'instructeur est déjà reservé sur ce creneau.");
+      }
+
+      // Verifier si chevauchement des dates avec un créneau existant pour l'avion choisi
+      $foundAircraft = $this->manager->find("SELECT idActivity
+        FROM activity
+        WHERE ((dateBegin BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
+        OR (dateEnd BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
+        OR ('" . $dateBeginStr . "' BETWEEN dateBegin AND dateEnd))
+        AND $idAircraft = ?', [$idAircraft]");
+
+      if($foundAircraft !== null){
+        $error->append("Attention ! L'avion est déjà reservé sur ce creneau.");
+      }
+
+      if(count($error) == 0) {
+        return "ok";
+      }else{
+        return $error;
+      }
+    }
+
     public function addActivity($activityType, $utility, $nbHours, $idMember){
-        $this->manager->exec('INSERT INTO activity (utility, nbHours, idActivityType, idMember ) VALUES (?,?,?,?)', [
+        $add = $this->manager->exec('INSERT INTO activity (utility, nbHours, idActivityType, idMember ) VALUES (?,?,?,?)', [
                 $utility,
                 $nbHours,
                 $activityType,
                 $idMember
             ]);
 
-            return "ok";
-        // }else{
-        //     return $error;
-        //  }
+        if($add == 0) {
+          $error = "ErreurAddActivity";
+          return $error;
+        } else {
+          return "ok";
+        }
 
     }
 
     public function deleteActivity($idActivity){
-        $delete = $this->manager->exec('DELETE FROM activity WHERE idActivity = $idActivity');
+        $delete = $this->manager->exec("DELETE FROM activity WHERE idActivity = $idActivity");
 
         if($delete == 0) {
-          $error->append("ErreurDelete");
+          $error = "ErreurDeleteActivity";
           return $error;
         } else {
           return "ok";
@@ -111,7 +152,15 @@ class ActivityManager{
     }
 
     public function getActivity($idMember){
-        $found = $this->manager->getAll('SELECT idActivity, utility, nbHours, activitytype.name from activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType WHERE idMember = ?', [$idMember]);
+        $found = $this->manager->getAll("SELECT idActivity, activitytype.name as 'activityName',
+          IFNULL(activity.utility,'') as 'utility', IFNULL(nbHours,'') as 'nbHours',
+          IFNULL(dateBegin,'') as 'dateBegin', IFNULL(dateEnd,'') as 'dateEnd',
+          (CASE WHEN ((dateBegin IS NOT NULL) AND (dateEnd IS NOT NULL)) THEN 'OUI' else 'NON' END) AS 'booked',
+          IFNULL(instructor.name,'') as 'instructorName', IFNULL(aircraft.name,'') as 'aircraftName'
+          FROM activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType
+          LEFT JOIN instructor ON activity.idInstructor = instructor.idInstructor
+          LEFT JOIN aircraft ON activity.idAircraft = aircraft.idAircraft
+          WHERE idMember = ?", [$idMember]);
           return $found;
       }
 
@@ -120,10 +169,10 @@ class ActivityManager{
         // Connect to database
         $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
-        // Requete pour recuperer les activites
+        // Requete pour recuperer l'activite a modifier
         $querySelect = "SELECT idActivity, activitytype.name AS 'nameActivityType',
         activity.idMember as 'idMember', concat(lastname,' ',firstname) as 'userName',
-        nbHours, utility, instructorNeeded, case when instructorNeeded = 1 then 'OUI' else 'NON' END as 'instructorNeededString' ,
+        nbHours, utility, instructorNeeded, (CASE WHEN instructorNeeded = 1 THEN 'OUI' ELSE 'NON' END) AS 'instructorNeededString',
         idInstructor, idAircraft, dateBegin, dateEnd
         from activity
         INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType
@@ -131,28 +180,32 @@ class ActivityManager{
         INNER JOIN user ON member.idUser = user.idUser
         WHERE idActivity = $idActivity";
 
+        // Renvoie du resultat
         $result = mysqli_query($link, $querySelect);
         $row = mysqli_fetch_array($result);
-
-        // $found = $this->manager->getAll("SELECT idActivity, activitytype.name AS 'nameActivityType',
-        // activity.idMember as 'idMember', concat(lastname,' ',firstname) as 'userName',
-        // nbHours, utility, case when instructorNeeded = 1 then 'OUI' else 'NON' END as 'instructorNeeded',
-        // idInstructor, idAircraft, dateBegin, dateEnd
-        // from activity
-        // INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType
-        // INNER JOIN member ON activity.idMember = member.idMember
-        // INNER JOIN user ON member.idUser = user.idUser
-        // WHERE idActivity = ?", [$idActivity]);
         return $row;
       }
 
-    // ANcien pour HistoryAll
-    // public function getActivityAll(){
-    // //    $found = $this->manager->getAll('SELECT idActivity, dateBegin, aircraft.utility AS "utility", dateEnd, nbHours, idMember, activitytype.name AS "nameActivityType", activitytype.instructorNeeded, aircrafttype.name AS "nameAircrafttype" from activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType INNER JOIN aircraft ON activity.idAircraft = aircraft.idAircraft INNER JOIN aircrafttype ON aircraft.idAircraftType = aircrafttype.idAircraftType');
-    //     $found = $this->manager->getAll('SELECT idActivity, idMember, activitytype.name AS "nameActivityType", instructorNeeded, nbHours, utility, dateBegin, dateEnd from activity INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType WHERE dateBegin IS NULL ORDER BY idActivity DESC');
-    //     return $found;
-    //     // INNER JOIN aircrafttype ON  aircrafttype.idAircraftType = activity.idAircraftType
-    // }
+    public function getActivityToPlan(){
+
+      // Connect to database
+      $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+      // Requete pour recuperer les activites à planifier
+      $query = "SELECT idActivity, activitytype.name AS 'nameActivityType',
+      activity.idMember as 'idMember', concat(lastname,' ',firstname) as 'userName',
+      nbHours, utility, (CASE WHEN instructorNeeded = 1 THEN 'OUI' ELSE 'NON' END) AS 'instructorNeeded'
+      from activity
+      INNER JOIN activitytype ON activity.idActivityType = activitytype.idActivityType
+      INNER JOIN member ON activity.idMember = member.idMember
+      INNER JOIN user ON member.idUser = user.idUser
+      WHERE dateBegin IS NULL ORDER BY idActivity";
+      $result = mysqli_query($link, $query);
+
+      // Renvoie du resultat
+      $result = mysqli_query($link, $query);
+      return $result;
+    }
 
     public function getInstructor(){
         $found = $this->manager->getAll('SELECT * from instructor');
@@ -163,10 +216,6 @@ class ActivityManager{
         $found = $this->manager->getAll('SELECT * from aircraft');
         return $found;
     }
-
-    // public function updateActivity($idActivity, $idAircraft, $idInstructor, $dateBegin, $dateEnd){
-    //   $this->manager->exec("UPDATE activity SET idAircraft = '$idAircraft', idInstructor = '$idInstructor', dateBegin = '$dateBegin', dateEnd = '$dateEnd' WHERE idActivity = '$idActivity'");
-    // }
 
     public function updateActivity($idActivity, $idAircraft, $idInstructor, $dateBegin, $dateEnd, $instructorNeeded){
 
@@ -232,55 +281,6 @@ class ActivityManager{
          $error->append("DatesNotValid");
       }
 
-
-      // if((!isset($dateBegin)) || (!isset($dateEnd))) {
-        // $error->append("DatesNeeded");
-      // } else {
-        // Conversion des dates locales en dates time mysql
-        // $dateBeginStr = date("Y-m-d H:i:s",strtotime($dateBegin));
-        // $dateEndStr = date("Y-m-d H:i:s",strtotime($dateEnd));
-        // Meme jour
-        // $dateBeginDay = date("Y-m-d",$dateBegin);
-        // $dateEndDay = date("Y-m-d",$dateEnd);
-      // } // acollade a supp
-
-
-        // if(strcmp($dateBeginDay, $dateEndDay) !== 0) {
-        //   $error->append("DatesNoEgal");
-        // } else {
-        //   // Debut verif week end jf
-        //   // $date = ('2020-05-08');
-        //   // Date de l'activite
-        //   $dateActivity = $dateBeginDay;
-        //   $datetime = date_create($dateActivity);
-        //   $dateDMY = explode("-", $dateActivity);
-        //   // explode pour mettre la date du jour en format numerique: 31/05/2009  -> 31052009
-        //   // echo $dateDMY[0];
-        //   // echo $dateDMY[1];
-        //   // echo $dateDMY[2];
-        //   // Verif date future
-        //   if(strtotime($dateActivity) > time()){
-        //     // echo 'OK';
-        //     // Verif saison
-        //     $datemd = $datetime->format('md');
-        //     if(($datemd >= '0415') && ($datemd <= '1015')) {
-        //       // echo 'Ouvert tous les jours';
-        //     } else {
-        //       // echo 'Hors-saison ouvert samedi, dimanche et jf';
-        //       if((check_weekend($datetime) == 1) || jour_ferie(mktime(0,0,0,$dateDMY[1],$dateDMY[2],$dateDMY[0])) == 1){
-        //         // echo 'Nous sommes un jour férié, samedi ou dimanche !! OK !!';
-        //         // verifier si jour = samedi, dimanche
-        //         // 6 = Samedi ou 7 = Dimanche
-        //         // echo jour_ferie(mktime(0,0,0,$dateDMY[1],$dateDMY[2],$dateDMY[0]));
-        //         // fin verif date
-        //       } else {
-        //         $error->append("HorsSaisonError");
-        //       }
-        //     }
-        //   } else {
-        //     $error->append("DatePassedError");
-        //   }
-        // }
       if(count($error) == 0) {
         // Update des donnees
         $update = $this->manager->exec("UPDATE activity
