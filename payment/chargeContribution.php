@@ -32,17 +32,20 @@ $customer = \Stripe\Customer::create(array(
 // $intervention = $interventionManage->getInterventionPay();
 
 $manager = new DataBaseManager();
-//$contributionManager = new RegisterMemberManager($manager);
+$contributionManager = new RegisterMemberManager($manager);
 
-if(isset($_SESSION['contribution'])){
-  $amount = $_SESSION['contribution'];
-}
-//
-// if(isset($_SESSION['idMember'])){
-//
-//     $contribution = $contributionManager->getContribution($_SESSION['idMember']);
+// if(isset($_SESSION['contribution'])){
+//   $amount = $_SESSION['contribution'];
 // }
-// $amount = $contribution[0]['feeContribution'];
+//
+echo $_SESSION['idMember'];
+if(isset($_SESSION['idMember'])){
+
+    $contribution = $contributionManager->getContribution($_SESSION['idMember']);
+    // var_dump($contribution);
+    $amount = $contribution[0]['feeContribution'];
+     echo $amount;
+}
 
 //$amount = $intervention['duration'] * $intervention['price']*100;
 
@@ -85,9 +88,16 @@ $paymentContribution = new PaymentContribution();
 
 // Add Transaction To DB
 $paymentContribution->addPaymentContribution($paymentData);
+$dateToday = date('m-d-Y');
+echo $dateToday;
+$updateContribution = $contributionManager->updateContributionDate($_SESSION['idMember'], "2020-07-22");
+if($updateContribution == "ok"){
+
+  // Redirect to success
+  //header('Location: ../html/success.php?id='.$charge->id.'&cardHolder='.$cardHolder);
+
+}
 
 
 
-// Redirect to success
-header('Location: ../html/success.php?id='.$charge->id.'&cardHolder='.$cardHolder);
 // header('Location: index.html');

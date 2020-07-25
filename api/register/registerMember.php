@@ -25,24 +25,37 @@ if (isset($json['lastName']) &&
     $manager = new DataBaseManager();
     $registerMember = new RegisterMemberManager($manager);
 
-    $result = $registerMember->register($json['lastName'],
-        $json['firstName'],
-        $json['birthDate'],
-        $json['memberOutside'],
-        $json['clubOutside'],
-        $json['license'],
-        $json['email'],
-        $json['login'],
-        $json['password'],
-        $json['confirmPassword']);
+    // $result = $registerMember->register($json['lastName'],
+    //     $json['firstName'],
+    //     $json['birthDate'],
+    //     $json['memberOutside'],
+    //     $json['clubOutside'],
+    //     $json['license'],
+    //     $json['email'],
+    //     $json['login'],
+    //     $json['password'],
+    //     $json['confirmPassword']);
 
+        $result = $registerMember->register(
+                0,
+                0,
+                $json['lastName'],
+                $json['firstName'],
+                $json['birthDate'],
+                $json['memberOutside'],
+                $json['clubOutside'],
+                $json['license'],
+                $json['email'],
+                $json['login'],
+                $json['password'],
+                $json['confirmPassword']);
 
 
     if($result == "ok"){
           // repasser l'amount vers la page de payment
-          if(isset($_SESSION['idMember'])){
-            $contribution = $registerMember->getContribution($_SESSION['idMember']);
-            $_SESSION['contribution'] = $contribution[0]['feeContribution'];
+          // if(isset($_SESSION['idMember'])){
+          //   $contribution = $registerMember->getContribution($_SESSION['idMember']);
+          //   $_SESSION['contribution'] = $contribution[0]['feeContribution'];
           }
 
         http_response_code(200);

@@ -51,7 +51,7 @@ class AccountManager{
 		}
 
 		function getIdCustomerFromToken($token){
-				 return $this->manager->find("SELECT idCustomer FROM customer INNER JOIN user ON user.idUser = customer.idCustomer where token = ?", [$token]);//['idUser'];
+				 return $this->manager->find("SELECT idCustomer FROM customer INNER JOIN user ON user.idUser = customer.idUser where token = ?", [$token]);//['idUser'];
 		}
 
 		public function getTypeFromToken($token){

@@ -40,7 +40,7 @@ $headerCustomer = "
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
 
-						<li><a href=\"serviceRequest.html\">Commander un service</a></li>
+						<li><a href=\"serviceRequest.php\">Commander un service</a></li>
 						<li><a href=\"serviceHistory.html\">Consulter ses commandes</a></li>
 						<li><a href=\"accountCustomer.html\">Mon compte</a></li>
 
@@ -66,7 +66,7 @@ $headerMember = "
 						<li><a href=\"index.html\">Accueil</a></li>
 						<li><a href=\"activityRequest.php\">Réserver une activité</a></li>
 						<li><a href=\"activityHistory.html\">Consulter ses activités</a></li>
-						<li><a href=\"accountMember.html\">Mon compte</a></li>
+						<li><a href=\"accountMember.php\">Mon compte</a></li>
 
 						<li><a href=\"\" onclick=\"deco()\">Deconnexion</a>
 							 <img class='nav-link' style='cursor: pointer' height='30px' width='30px' onclick='deco()' src='../../images/turn-off.png' alt=''>
@@ -90,7 +90,7 @@ $headerAdmin = "
 						<li><a href=\"\">Consulter les commandes</a></li>
 						<li><a href=\"activityPlan.php\">Planifier les activités</a></li>
 						<li><a href=\"calendar.html\">Consulter le planning</a></li>
-						<li><a href=\"\">Consulter les membres</a></li>
+						<li><a href=\"accountAdmin.php\">Consulter les membres</a></li>
 						<li><a href=\"\">Gérer les ressources</a></li>
 						<li><a href=\"\">Gérer les tables de paramétrages</a></li>
 
@@ -122,8 +122,8 @@ if(isset($_SESSION['token'])){
 			switch ($type['type']){
 				//client
 				case 1:
-					$idCustomer =  $accountManager->getIdCustomerFromToken($_SESSION['token']);
-					$idCustomer = $idCustomerArray['idMember'];
+					$idCustomerArray =  $accountManager->getIdCustomerFromToken($_SESSION['token']);
+					$idCustomer = $idCustomerArray['idCustomer'];
 					$_SESSION['idCustomer'] = $idCustomer;
 					echo $headerCustomer;
 					break;

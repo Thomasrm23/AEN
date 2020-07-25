@@ -85,7 +85,7 @@ class ActivityManager{
         $delete = $this->manager->exec('DELETE FROM activity WHERE idActivity = $idActivity');
 
         if($delete == 0) {
-          $error->append("ErreurUpdate");
+          $error->append("ErreurDelete");
           return $error;
         } else {
           return "ok";

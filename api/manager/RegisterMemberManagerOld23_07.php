@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../api/pdo.php';
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once  __DIR__ . '/../models/Member.php';
 
@@ -55,17 +54,27 @@ class RegisterMemberManager{
       }
 
       public function getContribution($idMember){
-        $found = $this->manager->getAll('SELECT feeContribution
-          FROM membercontribution
-          INNER JOIN member ON member.idMemberContribution = membercontribution.idMemberContribution
-          WHERE idMember = ?', [$idMember]);
+        $found = $this->manager->getAll('SELECT feeContribution FROM membercontribution INNER JOIN member ON member.idMemberContribution = membercontribution.idMemberContribution WHERE idMember = ?', [$idMember]);
         return $found;
       }
+
+      public function updateContributionDate($idMember, $dateContribution){
+        $update = $this->manager->exec("UPDATE member
+        SET contributionDate = '" . $dateContribution . "'
+        WHERE idMember = $idMember");
+
+        if($update === 0) {
+          return null;
+        } else {
+          return "ok";
+        }
+      }
+
 
       public function getAccountMember($idMember){
         $found = $this->manager->getAll("SELECT idMember, firstName, lastName, login, password, login, password, email,
           birthDate, memberOutside, clubOutside, license,
-          (CASE
+          (case
             WHEN (YEAR(contributionDate) = YEAR(NOW())) THEN 'OUI'
             ELSE 'NON'
             END) as 'contributionPayed', contributionDate
@@ -75,44 +84,6 @@ class RegisterMemberManager{
         return $found;
       }
 
-      public function getAccountAdmin(){
-        $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-        $query = "SELECT idMember, firstName, lastName, login, password, login, password, email,
-          birthDate, (CASE WHEN memberOutside = 1 THEN 'OUI' ELSE 'NON' END) as 'memberOutside', clubOutside, license,
-          (case
-            WHEN (YEAR(contributionDate) = YEAR(NOW())) THEN 'OUI'
-            ELSE 'NON'
-            END) as 'contributionPayed', contributionDate
-          FROM member
-          INNER JOIN user ON member.idUser = user.idUser";
-        $result = mysqli_query($link, $query);
-        return $result;
-      }
-
-      public function deleteMember($idMember){
-          $delete = $this->manager->exec("DELETE FROM member WHERE idMember = $idMember");
-
-          if($delete === 0) {
-            $error->append("ErreurDelete");
-            return $error;
-          } else {
-            return "ok";
-          }
-      }
-
-
-    public function updateContributionDate($idMember, $dateContribution){
-        $this->manager->exec("UPDATE member
-        SET contributionDate = '" . $dateContribution . "'
-        WHERE idMember = $idMember");
-
-        if($update == 0) {
-          $error->append("ErreurUpdateMember");
-          return $error;
-        } else {
-          return "ok";
-        }
-      }
 
       public function register($idUser, $idMember, $lastName, $firstName, $birthDate, $memberOutside, $clubOutside, $license, $email, $login, $password, $confirmPassword){
 
