@@ -5,10 +5,30 @@ require_once __DIR__ . '/../manager/ServiceManager.php';
 require_once  __DIR__ . '/../manager/AccountManager.php';
 
     header("Access-Control-Allow-Origin: *");
-    // header('Content-type: application/json');
+     // header('Content-type: application/json');
 
  $json = json_decode($_POST['data'], true);
-  // echo $json['serviceDate'];
+ // echo $json['endDate'];
+ // echo $json['beginDate'];
+ // echo $json['parkingType'];
+ // echo $json['endDate'];
+
+// echo $json['serviceDate'];
+// echo $json['landing'];
+//  echo $json['planeTypeChoice'];
+//  echo $json['basedChoice'];
+//  echo $json['markupDuration'];
+//  echo $json['provisioning'];
+//  echo $json['petrole'];
+//  echo $json['quantity'];
+//  echo $json['parking'];
+//  echo $json['parkingType'];
+//  echo $json['beginDate'];
+//  echo $json['endDate'];
+
+// echo $json['acousticGroup'];
+
+
 
  session_start();
 
@@ -27,15 +47,17 @@ else{
 // if (isset($json['landing'])){
 
 
-    $service = $serviceManager->addServiceRequest($idCustomer, $json['serviceDate'], $json['landing'], $json['planeTypeChoice'], $json['basedChoice'], $json['markupDuration']);
+    $service = $serviceManager->addServiceRequest($idCustomer, $json['serviceDate'], $json['landing'], $json['planeTypeChoice'], $json['acousticGroup'], $json['basedChoice'], $json['dayweek'], $json['markupDuration'], $json['provisioning'], $json['petrole'],
+    $json['quantity'], $json['parking'], $json['parkingType'], $json['tariffType'], $json['groundArea'], $json['mass'], $json['beginDate'], $json['endDate'], $json['cleaning'], $json['weather']);
 
     if($service == "ok"){
         http_response_code(200);
         die();
-    }
+    }else{
     http_response_code(402);
-      echo json_encode($service);
+    echo json_encode($service);
     die();
+    }
 // }
 
 http_response_code(400);

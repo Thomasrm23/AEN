@@ -1,4 +1,4 @@
-<?php
+tariffType<?php
 require_once __DIR__ . '/../api/DataBaseManager.php';
 require_once __DIR__ . '/../api/manager/ServiceManager.php';
 
@@ -78,8 +78,8 @@ $serviceList = $serviceManager->getService();
                     <div>
                     <p style="display:flex; margin-bottom:0;">Votre avion est-il basé à cet aérodrome ?</p>
                     <div class="common-input mb-20 form-control" style="display:flex; border: 0px;">
-                      <input name="basedChoice" id="basedChoice"  type="radio" value="1"><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="basedChoice">Oui</label><br>
-                      <input name="basedChoice" id="notBasedChoice" type="radio" value="2"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="notBasedChoice">Non</label><br>
+                      <input name="basedChoice" id="basedChoice"  type="radio" value="1" onclick="showBased()"><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="basedChoice">Oui</label><br>
+                      <input name="basedChoice" id="notBasedChoice" type="radio" value="2" onclick="showNotBased()"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="notBasedChoice">Non</label><br>
                     </div>
 
                     <div class="common-input mb-20 form-control" style="display:flex;">
@@ -95,35 +95,83 @@ $serviceList = $serviceManager->getService();
                         <input name="planeTypeChoice" id="reacteur" type="radio" class="planeTypeChoice" value="2"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="reacteur">Réacteur</label><br>
                       </div>
 
+                      <select type="text" class="common-input mb-20 form-control" name="acousticGroup" id="acousticGroup">
+                        <option>Groupe acoustique de l'avion</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5a">5a</option>
+                        <option value="5b">5b</option>
+                      </select>
+                      <!-- modifff -->
+                      <p id="dayweekP1" style="display:flex; margin-bottom:0;">Tarif :</p>
+                      <div id="dayweekDiv1" class="common-input mb-20 form-control" style="display:flex; border: 0px;">
+                        <input name="dayweekWS" id="dayweekW"  type="radio" value="W"><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="dayweekW">Week-end</label><br>
+                        <input name="dayweekWS" id="dayweekS" type="radio" value="S"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="dayweekS">Semaine</label><br>
+                      </div>
+
+
+                      <p id="dayweekP2" style="display:flex; margin-bottom:0;">Tarif :</p>
+                      <div id="dayweekDiv2" class="common-input mb-20 form-control" style="display:flex; border: 0px;">
+                        <input name="dayweekMU" id="dayweekM"  type="radio" value="M" ><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="dayweekM">Mensuel</label><br>
+                        <input name="dayweekMU" id="dayweekU" type="radio" value="U"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="dayweekU">Unité</label><br>
+                      </div>
+
+
                       <input name="markupDuration" placeholder="Durée de marquage (unité de 30 minutes)" id="markupDuration" class="common-input mb-20 form-control" type="text">
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                         <input name="provisioning" placeholder="" id="provisioning" type="checkbox"
                         value="0" onclick="showProvisioning()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="provisioning"><?php echo $serviceList[1]['name']?></label>
                       </div>
-                      <input name="provisioning1" placeholder="champ 1" id="provisioning1" class="common-input mb-20 form-control" type="text">
-                      <input name="provisioning2" placeholder="champ 2" id="provisioning2" class="common-input mb-20 form-control" type="text">
+                      <!-- <input name="petroleList" placeholder="Type de produit pétrolier" id="petroleList" class="common-input mb-20 form-control" type="text"> -->
+
+                      <select type="text" class="common-input mb-20 form-control" name="petroleList" id="petroleList">
+                        <option value="">Votre produit pétrolier</option>
+                      </select>
+                      <input name="quantity" placeholder="Quantité de carburant (en litres)" id="quantity" class="common-input mb-20 form-control" type="number">
+
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                       <input name="parking" placeholder="" id="parking" type="checkbox"
                         value="0" onclick="showParking()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="parking"><?php echo $serviceList[2]['name']?></label>
                       </div>
-                      <input name="parking1" placeholder="champ 1" id="parking1" class="common-input mb-20 form-control" type="text">
-                      <input name="parking2" placeholder="champ 2" id="parking2" class="common-input mb-20 form-control" type="text">
+
+                      <p id="parkingTypeP" style="display:flex; margin-bottom:0;">Type de parking :</p>
+                      <div id="parkingType" class="common-input mb-20 form-control" style="display:flex; border: 0px;">
+                        <input name="parkingTypeChoice" id="covered"  type="radio" value="COV" onclick="showCovered()"><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="covered">Sous abris</label><br>
+                        <input name="parkingTypeChoice" id="outside" type="radio" value="OUT" onclick="showOutside()"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="outside">Extérieur</label><br>
+                      </div>
+
+                      <p id="tariffTypeP" style="display:flex; margin-bottom:0;">Tarif :</p>
+                      <div id="tariffType" class="common-input mb-20 form-control" style="display:flex; border: 0px;">
+                        <input name="tariffTypeChoice" id="mensuel"  type="radio" value="M" ><label style="display:flex; align-items:flex-end; padding-left:5px; padding-right:50px;" for="mensuel">Mensuel</label><br>
+                        <input name="tariffTypeChoice" id="journalier" type="radio" value="J"><label style="display:flex; align-items:flex-end; padding-left:5px;" for="journalier">Journalier</label><br>
+                      </div>
+
+                      <input name="groundArea" placeholder="Surface" id="groundArea" class="common-input mb-20 form-control" type="number">
+
+                      <input name="mass" placeholder="Masse (en kgs)" id="mass" class="common-input mb-20 form-control" type="number">
+
+                      <p id="beginDateP" style="display:flex; margin-bottom:1rem;">Date du début de stationnement :</p>
+                      <input name="beginDate" id="beginDate" style="margin-bottom:1rem;" class="common-input mb-20 form-control" type="date">
+
+
+                      <p id="endDateP" style="display:flex; margin-bottom:1rem;">Date de la fin du stationnement :</p>
+                      <input name="endDate" id="endDate" style="margin-bottom:1rem;" class="common-input mb-20 form-control" type="date">
+                      <!-- <input name="tariffType" placeholder="Type de parking choisi" id="tariffType" class="common-input mb-20 form-control" type="text"> -->
+                      <!-- <input name="parking2" placeholder="champ 2" id="parking2" class="common-input mb-20 form-control" type="text"> -->
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                       <input name="cleaning" placeholder="" id="cleaning" type="checkbox"
                         value="0" onclick="showCleaning()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="cleaning"><?php echo $serviceList[3]['name']?></label>
                       </div>
-                      <input name="cleaning1" placeholder="champ 1" id="cleaning1" class="common-input mb-20 form-control" type="text">
-                      <input name="cleaning2" placeholder="champ 2" id="cleaning2" class="common-input mb-20 form-control" type="text">
 
                       <div class="common-input mb-20 form-control" style="display:flex;">
                       <input name="weather" placeholder="" id="weather" type="checkbox"
                         value="0" onclick="showWeather()"><label style="display:flex; align-items:flex-end; padding-left:10px;" for="weather"><?php echo $serviceList[4]['name']?></label>
                       </div>
-                      <input name="weather1" placeholder="champ 1" id="weather1" class="common-input mb-20 form-control" type="text">
-                      <input name="weather2" placeholder="champ 2" id="weather2" class="common-input mb-20 form-control" type="text">
 
 
           <!--          <select type="text" class="common-input mb-20 form-control" name="utility" id="utility">
@@ -171,54 +219,99 @@ $serviceList = $serviceManager->getService();
       <script type="text/javascript">
 
 
-
-
       document.getElementById("planeType").style.display = "none";
       document.getElementById("planeTypeP").style.display = "none";
+      document.getElementById("acousticGroup").style.display = "none";
+      document.getElementById("dayweekP1").style.display = "none";
+      document.getElementById("dayweekDiv1").style.display = "none";
+      document.getElementById("dayweekP2").style.display = "none";
+      document.getElementById("dayweekDiv2").style.display = "none";
       document.getElementById("markupDuration").style.display = "none";
 
-      document.getElementById("provisioning1").style.display = "none";
-      document.getElementById("provisioning2").style.display = "none";
+      document.getElementById("petroleList").style.display = "none";
+      document.getElementById("quantity").style.display = "none";
 
-      document.getElementById("parking1").style.display = "none";
-      document.getElementById("parking2").style.display = "none";
+      document.getElementById("parkingType").style.display = "none";
+      document.getElementById("parkingTypeP").style.display = "none";
+      document.getElementById("tariffType").style.display = "none";
+      document.getElementById("tariffTypeP").style.display = "none";
+      document.getElementById("groundArea").style.display = "none";
+      document.getElementById("mass").style.display = "none";
+      document.getElementById("endDateP").style.display = "none";
+      document.getElementById("endDate").style.display = "none";
+      document.getElementById("beginDate").style.display = "none";
+      document.getElementById("beginDateP").style.display = "none";
 
-      document.getElementById("cleaning1").style.display = "none";
-      document.getElementById("cleaning2").style.display = "none";
 
-      document.getElementById("weather1").style.display = "none";
-      document.getElementById("weather2").style.display = "none";
-
-      function getBasedChoice(){
-
-        var basedChoice;
-
-        if (document.getElementById('basedChoice').checked) {
-          basedChoice = document.getElementById('basedChoice').value;
+      function showBased(){
+        if ((document.getElementById('basedChoice').checked) && (document.getElementById('parking').checked) && (document.getElementById('covered').checked)) {
+          document.getElementById("tariffType").style.display = "flex";
+          document.getElementById("tariffTypeP").style.display = "flex";
         }
+        if ((document.getElementById('basedChoice').checked) && (document.getElementById('landing').checked)) {
+        document.getElementById("dayweekP2").style.display = "flex";
+        document.getElementById("dayweekDiv2").style.display = "flex";
+        document.getElementById("dayweekP1").style.display = "none";
+        document.getElementById("dayweekDiv1").style.display = "none";
+        document.getElementById("dayweekW").checked=false;
+        document.getElementById("dayweekS").checked=false;
+        }
+      }
+      function showNotBased(){
         if (document.getElementById('notBasedChoice').checked) {
-          basedChoice = document.getElementById('notBasedChoice').value;
+          document.getElementById("tariffType").style.display = "none";
+          document.getElementById("tariffTypeP").style.display = "none";
+          document.getElementById("mensuel").checked=false;
+          document.getElementById("journalier").checked=false;
+          document.getElementById("dayweekP2").style.display = "none";
+          document.getElementById("dayweekDiv2").style.display = "none";
+          document.getElementById("dayweekU").checked=false;
+          document.getElementById("dayweekM").checked=false;
+
+        if ((document.getElementById('notBasedChoice').checked) && (document.getElementById('landing').checked)) {
+          document.getElementById("dayweekP1").style.display = "flex";
+          document.getElementById("dayweekDiv1").style.display = "flex";
         }
-         return basedChoice;
+        }
       }
 
-      function getPlaneType(){
+      function showCovered(){
+        if (document.getElementById('covered').checked){
+          document.getElementById("mass").style.display = "block";
+        }
+        if ((document.getElementById('covered').checked) && (document.getElementById('basedChoice').checked)){
+          document.getElementById("tariffType").style.display = "flex";
+          document.getElementById("tariffTypeP").style.display = "flex";
+        }
+      }
 
-        var planetype;
-        if (document.getElementById('turbine').checked) {
-          planetype = document.getElementById('turbine').value;
+      function showOutside(){
+        if (document.getElementById('outside').checked){
+        document.getElementById("mass").style.display = "none";
+        document.getElementById("tariffType").style.display = "none";
+        document.getElementById("tariffTypeP").style.display = "none";
+        document.getElementById("mensuel").checked=false;
+        document.getElementById("journalier").checked=false;
+
         }
-        if (document.getElementById('reacteur').checked) {
-          planetype = document.getElementById('reacteur').value;
-        }
-         return planetype;
       }
 
       function showLanding(){
+        if ((document.getElementById('basedChoice').checked) && (document.getElementById('landing').checked)) {
+          document.getElementById("dayweekP2").style.display = "flex";
+          document.getElementById("dayweekDiv2").style.display = "flex";
+        }
+
+        if ((document.getElementById('notBasedChoice').checked) && (document.getElementById('landing').checked)) {
+          document.getElementById("dayweekP1").style.display = "flex";
+          document.getElementById("dayweekDiv1").style.display = "flex";
+        }
+
         if (document.getElementById('landing').checked){
           document.getElementById("landing").value=1;
           document.getElementById("planeType").style.display = "flex";
           document.getElementById("planeTypeP").style.display = "flex";
+          document.getElementById("acousticGroup").style.display = "flex";
           document.getElementById("markupDuration").style.display = "block";
 
 
@@ -229,84 +322,191 @@ $serviceList = $serviceManager->getService();
           document.getElementById("markupDuration").value="";
           document.getElementById("planeType").style.display = "none";
           document.getElementById("planeTypeP").style.display = "none";
+          document.getElementById("acousticGroup").style.display = "none";
           document.getElementById("markupDuration").style.display = "none";
+          document.getElementById("dayweekP1").style.display = "none";
+          document.getElementById("dayweekDiv1").style.display = "none";
+          document.getElementById("dayweekP2").style.display = "none";
+          document.getElementById("dayweekDiv2").style.display = "none";
+
+
         }
       }
 
       function showProvisioning(){
         if (document.getElementById('provisioning').checked){
           document.getElementById("provisioning").value=1;
-          document.getElementById("provisioning1").style.display = "block";
-          document.getElementById("provisioning2").style.display = "block";
+          document.getElementById("petroleList").style.display = "block";
+          document.getElementById("quantity").style.display = "block";
+
         } else {
           document.getElementById("provisioning").value=0;
-          document.getElementById("provisioning1").style.display = "none";
-          document.getElementById("provisioning2").style.display = "none";
+          document.getElementById("petroleList").value="";
+          document.getElementById("quantity").value = "";
+          document.getElementById("petroleList").style.display = "none";
+          document.getElementById("quantity").style.display = "none";
         }
       }
 
       function showParking(){
+        if ((document.getElementById('basedChoice').checked) && (document.getElementById('parking').checked) && (document.getElementById('covered').checked)) {
+          document.getElementById("tariffType").style.display = "flex";
+          document.getElementById("tariffTypeP").style.display = "flex";
+        }
         if (document.getElementById('parking').checked){
           document.getElementById("parking").value=1;
-          document.getElementById("parking1").style.display = "block";
-          document.getElementById("parking2").style.display = "block";
+          document.getElementById("parkingType").style.display = "flex";
+          document.getElementById("parkingTypeP").style.display = "flex";
+          document.getElementById("groundArea").style.display = "flex";
+          document.getElementById("beginDate").style.display = "flex";
+          document.getElementById("beginDateP").style.display = "flex";
+          document.getElementById("endDate").style.display = "flex";
+          document.getElementById("endDateP").style.display = "flex";
         } else {
           document.getElementById("parking").value=0;
-          document.getElementById("parking1").style.display = "none";
-          document.getElementById("parking2").style.display = "none";
+          document.getElementById("covered").checked=false;
+          document.getElementById("outside").checked=false;
+          document.getElementById("journalier").checked=false;
+          document.getElementById("mensuel").checked=false;
+          document.getElementById("groundArea").value = "";
+          document.getElementById("mass").value = "";
+          document.getElementById("beginDate").value="";
+          document.getElementById("endDate").value="";
+
+          document.getElementById("parkingType").style.display = "none";
+          document.getElementById("parkingTypeP").style.display = "none";
+          document.getElementById("tariffType").style.display = "none";
+          document.getElementById("tariffTypeP").style.display = "none";
+          document.getElementById("groundArea").style.display = "none";
+          document.getElementById("mass").style.display = "none";
+          document.getElementById("beginDate").style.display = "none";
+          document.getElementById("beginDateP").style.display = "none";
+          document.getElementById("endDate").style.display = "none";
+          document.getElementById("endDateP").style.display = "none";
         }
       }
 
       function showCleaning(){
         if (document.getElementById('cleaning').checked){
           document.getElementById("cleaning").value=1;
-          document.getElementById("cleaning1").style.display = "block";
-          document.getElementById("cleaning2").style.display = "block";
         } else {
           document.getElementById("cleaning").value=0;
-          document.getElementById("cleaning1").style.display = "none";
-          document.getElementById("cleaning2").style.display = "none";
         }
       }
 
       function showWeather(){
         if (document.getElementById('weather').checked){
           document.getElementById("weather").value=1;
-          document.getElementById("weather1").style.display = "block";
-          document.getElementById("weather2").style.display = "block";
         } else {
           document.getElementById("weather").value=0;
-          document.getElementById("weather1").style.display = "none";
-          document.getElementById("weather2").style.display = "none";
         }
+      }
+
+
+
+      function getBasedChoice(){
+
+        var getBasedChoice;
+
+        if (document.getElementById('basedChoice').checked) {
+          getBasedChoice = document.getElementById('basedChoice').value;
+        }
+        if (document.getElementById('notBasedChoice').checked) {
+          getBasedChoice = document.getElementById('notBasedChoice').value;
+        }
+         return getBasedChoice;
+      }
+
+      function getPlaneType(){
+
+        var getPlaneType;
+        if (document.getElementById('turbine').checked) {
+          getPlaneType = document.getElementById('turbine').value;
+        }
+        if (document.getElementById('reacteur').checked) {
+          getPlaneType = document.getElementById('reacteur').value;
+        }
+         return getPlaneType;
+      }
+
+      function getTariffType(){
+
+        var getTariffType;
+        if (document.getElementById('mensuel').checked) {
+          getTariffType = document.getElementById('mensuel').value;
+        }
+        else if (document.getElementById('journalier').checked) {
+          getTariffType = document.getElementById('journalier').value;
+        }
+        // else if (document.getElementById('covered').checked){
+        //   getTariffType = "J";
+        // }
+        else {
+          getTariffType = "S";
+        }
+
+        return getTariffType;
+      }
+
+      function getParkingType(){
+
+        var getParkingType;
+        if (document.getElementById('covered').checked) {
+          getParkingType = document.getElementById('covered').value;
+        }
+        if (document.getElementById('outside').checked) {
+          getParkingType = document.getElementById('outside').value;
+        }
+        return getParkingType;
+      }
+
+
+      function getDayweek(){
+
+        var getDayweek;
+        if (document.getElementById('dayweekW').checked) {
+          getDayweek = document.getElementById('dayweekW').value;
+        }
+        if (document.getElementById('dayweekS').checked) {
+          getDayweek = document.getElementById('dayweekS').value;
+        }
+        if (document.getElementById('dayweekU').checked) {
+          getDayweek = document.getElementById('dayweekU').value;
+        }
+        if (document.getElementById('dayweekM').checked) {
+          getDayweek = document.getElementById('dayweekM').value;
+        }
+         return getDayweek;
       }
 
 </script>
 <script>
-//       window.onload = function() {
-//
-//         var option = {
-//           url: '../api/activity/getActivityType.php',
-//           dataType: "text",
-//           type: "POST",
-//           success: function(data, status, xhr){
-//             let activity = JSON.parse(xhr.responseText);
-//             let optionElement;
-//             for ( let i = 0; i < activity.length; i++){
-//               optionElement = document.createElement("option");
-//               optionElement.setAttribute( "value", activity[i]['idActivityType']);
-//               optionElement.innerHTML = activity[i]['name'];
-//               $('#activityList').append(optionElement);
-//             }
-//             //  console.log();
-//           },
-//           error: function( xhr, status, error ){
-//
-//           }
-//         };
-//         $.ajax(option);
-//       };
-// better function
+window.onload = function() {
+
+            var option = {
+              url: '../api/service/getPetroleProduct.php',
+                dataType: "text",
+                type: "POST",
+                data: {},
+                success: function(data, status, xhr){
+                    let petrole = JSON.parse(xhr.responseText);
+                    let optionElement;
+                    for ( let i = 0; i < petrole.length; i++){
+                        optionElement = document.createElement("option");
+                        optionElement.setAttribute( "value", petrole[i]['idPetroleProduct']);
+                        optionElement.innerHTML = petrole[i]['name'];
+                        $('#petroleList').append(optionElement);
+
+                    }
+                },
+                error: function( xhr, status, error ){
+
+                }
+            };
+            $.ajax(option);
+        };
+
+
 
 $(function(){
 
@@ -316,15 +516,38 @@ $(function(){
 
     alert('test de click du bouton commander');
 
-    planeType = getPlaneType();
-    basedChoice = getBasedChoice();
+    getBasedChoice = getBasedChoice();
+    getPlaneType = getPlaneType();
+
+    getParkingType = getParkingType();
+    getTariffType = getTariffType();
+
+    getDayweek = getDayweek();
 
     var data1 = {
       serviceDate: $('#serviceDate').val(),
+      basedChoice: getBasedChoice,
+
       landing: $('#landing').val(),
-      planeTypeChoice: planeType,
-      basedChoice: basedChoice,
-      markupDuration: $('#markupDuration').val()
+      planeTypeChoice: getPlaneType,
+      acousticGroup: $('#acousticGroup').val(),
+      dayweek: getDayweek,
+      markupDuration: $('#markupDuration').val(),
+
+      provisioning: $('#provisioning').val(),
+      petrole: $('#petroleList').val(),
+      quantity: $('#quantity').val(),
+
+      parking: $('#parking').val(),
+      parkingType: getParkingType,
+      tariffType: getTariffType,
+      groundArea: $('#groundArea').val(),
+      mass: $('#mass').val(),
+      beginDate: $('#beginDate').val(),
+      endDate: $('#endDate').val(),
+
+      cleaning: $('#cleaning').val(),
+      weather: $('#weather').val()
     };
 
 
@@ -337,18 +560,20 @@ $(function(){
       //   nbHours : nbHours
       // },
       success: function(data, status, xhr){
-        // console.log(data);
-        // console.log(data1);
+         console.log(data);
+         console.log(data1);
 
-      //  console.log( JSON.stringify(data1));
+        console.log( JSON.stringify(data1));
       },
      error: function(xhr, status, error){
         // console.log(JSON.parse(data1));
-     console.log(data);
+     // console.log(data);
      //  if(xhr.status != 200){
        //  if(xhr.status == 402){
-         console.log(xhr.responseText);
-    //     showError(JSON.parse(xhr.responseText));
+       console.log( JSON.stringify(data1));
+
+         // console.log(xhr.responseText);
+         showError(JSON.parse(xhr.responseText));
      //			}
      }
     })
@@ -371,8 +596,8 @@ $(function(){
             case 'ErreurInsertServiceRequest':
               $('#ErreurInsertServiceRequest').show();
               break;
-            case 'ErreurInsertLineRequest':
-              $('#ErreurInsertLineRequest').show();
+            case 'ErreurInsertLineRequestLanding':
+              $('#ErreurInsertLineRequestLanding').show();
               break;
             case 'planeTypeNotSet':
               $('#planeTypeNotSet').show();
@@ -380,7 +605,18 @@ $(function(){
             case 'ErreurInsertLanding':
               $('#ErreurInsertLanding').show();
               break;
-
+            case 'ErreurInsertLineRequestProvisioning':
+              $('#ErreurInsertLineRequestProvisioning').show();
+              break;
+            case 'ErreurInsertProvisioning':
+              $('#ErreurInsertProvisioning').show();
+              break;
+            case 'ErreurInsertLineRequestParking':
+              $('#ErreurInsertLineRequestParking').show();
+              break;
+            case 'ErreurInsertParking':
+              $('#ErreurInsertParking').show();
+              break;
           }
         }
       }

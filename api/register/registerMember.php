@@ -17,8 +17,8 @@ if (isset($json['lastName']) &&
     isset($json['city']) &&
     isset($json['phoneNumber']) &&
     isset($json['birthDate']) &&
-    isset($json['memberOutside']) &&
-    isset($json['clubOutside']) &&
+    // isset($json['memberOutside']) &&
+    // isset($json['clubOutside']) &&
     isset($json['license']) &&
     isset($json['email']) &&
     isset($json['login']) &&
@@ -52,8 +52,8 @@ if (isset($json['lastName']) &&
     if($result == "ok"){
 
       // repasser l'amount vers la page de payment
-      $contribution = $registerMember->getContribution($_SESSION['idMember']);
-      $_SESSION['contribution'] = $contribution;
+      // $contribution = $registerMember->getContribution($_SESSION['idMember']);
+      // $_SESSION['contribution'] = $contribution;
 
       // if (checkdate($json['birthDate']->format('m'), $json['birthDate']->format('d'), $json['birthDate']->format('Y'))){
       //   if ($contribution != null) {
