@@ -41,7 +41,7 @@ $headerCustomer = "
 						<li><a href=\"index.html\">Accueil</a></li>
 
 						<li><a href=\"serviceRequest.php\">Commander un service</a></li>
-						<li><a href=\"serviceHistory.html\">Consulter ses commandes</a></li>
+						<li><a href=\"serviceViewCustomer.php\">Consulter ses commandes</a></li>
 						<li><a href=\"accountCustomer.html\">Mon compte</a></li>
 
 						<li><a href=\"\" onclick=\"deco()\">Deconnexion</a>
@@ -87,7 +87,7 @@ $headerAdmin = "
 				<nav id=\"nav-menu-container\">
 					<ul class=\"nav-menu\">
 						<li><a href=\"index.html\">Accueil</a></li>
-						<li><a href=\"\">Consulter les commandes</a></li>
+						<li><a href=\"serviceViewAll.php\">Consulter les commandes</a></li>
 						<li><a href=\"activityPlan.php\">Planifier les activités</a></li>
 						<li><a href=\"calendar.html\">Consulter le planning</a></li>
 						<li><a href=\"accountAdmin.php\">Consulter les membres</a></li>

@@ -35,7 +35,6 @@ $services = $serviceManager->getServiceAll();
 <body>
 	<header id="header">
 	</header>
-  <form name="frmServiceViewAll" method="post" action="">
     <section class="banner-area relative about-banner" id="home">
   		<img class="cta-img img-fluid" src="img/cta-img.png" alt="">
   		<div class="overlay overlay-bg"></div>
@@ -55,6 +54,7 @@ $services = $serviceManager->getServiceAll();
     <section class="contact-page-area section-gap">
   		<div class="container">
   			<div class="row justify-content-center">
+          <form name="frmServiceViewAll" method="post" action="">
           <div><b><p align="center">VEUILLEZ SELECTIONNER UNE LIGNE</p></b></div>
           <div class="table-wrap col-lg-10">
   					<table class="schdule-table table table-bordered">
@@ -89,11 +89,13 @@ $services = $serviceManager->getServiceAll();
               ?>
           </table>
        </div>
+     </form>
       </div>
         <div class="row justify-content-center">
           <td>
-            <button type="submit" name="buttonDelete" id="buttonDelete" onclick="setViewBill()">Voir la facture</td>
+            <button type="submit" name="" id="" onclick="setViewBill()">Voir la facture</button>
             <button type="button" name="buttonQuit" id="buttonQuit">Quitter</button>
+          </td>
         </div>
    </div>
   </section>
@@ -117,11 +119,11 @@ $services = $serviceManager->getServiceAll();
   <script type="text/javascript">
 
   function setViewBill() {
-     // document.frmAccountAdmin.action = "../api/service/viewBill.php";
-     // document.frmAccountAdmin.submit();
+     document.frmServiceViewAll.action = "../api/service/serviceBill.php";
+     document.frmServiceViewAll.submit();
    }
 
   </script>
-  </form>
+
 </body>
 </html>

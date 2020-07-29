@@ -13,7 +13,7 @@ class ServiceManager{
 
     public function getServiceAll(){
       $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-      $query = "SELECT idRequest, lastname, firstName, nameFr as 'country',
+      $query = "SELECT idRequest, lastName, firstName, nameFr as 'country',
       serviceDate, requestDate, stateRequest,
       (CASE WHEN basedChoice = 1 THEN 'OUI' ELSE 'NON' END) as 'basedChoice',
       servicerequest.idCustomer as 'idCustomer', customer.idUser as 'idUser'
@@ -26,7 +26,7 @@ class ServiceManager{
     }
 
     public function getServiceCustomer($idCustomer){
-      $found = $this->manager->getAll("SELECT idRequest, lastname, firstName, nameFr as 'country',
+      $found = $this->manager->getAll("SELECT idRequest, lastName, firstName, nameFr as 'country',
       serviceDate, requestDate, stateRequest,
       (CASE WHEN basedChoice = 1 THEN 'OUI' ELSE 'NON' END) as 'basedChoice',
       servicerequest.idCustomer as 'idCustomer', customer.idUser as 'idUser'
@@ -37,19 +37,36 @@ class ServiceManager{
       WHERE servicerequest.idCustomer = $idCustomer");
       return $found;
     }
-
     public function getServiceBill($idRequest){
-        $found = $this->manager->find("SELECT servicerequest.idRequest as 'idRequest',
-          lastname, firstName,  address, postalCode, city, nameFr as 'country',  phoneNumber,
-          linerequest.idService as 'idservice', service.name as 'serviceName', priceHT, priceTTC
-          FROM servicerequest
-          INNER JOIN customer ON servicerequest.idCustomer = customer.idCustomer
-          INNER JOIN user ON customer.idUser = user.idUser
-          INNER JOIN linerequest ON servicerequest.idRequest = linerequest.idRequest
-          INNER JOIN service ON linerequest.idService = service.idService
-          WHERE id = $idRequest");
-        return $found;
+      $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+      $query = "SELECT servicerequest.idRequest as 'idRequest',
+        lastName, firstName,  address, postalCode, city, nameFr as 'country',  phoneNumber,
+        linerequest.idService as 'idservice', service.name as 'serviceName', linerequest.priceHT, linerequest.priceTTC
+        FROM servicerequest
+        INNER JOIN customer ON servicerequest.idCustomer = customer.idCustomer
+        INNER JOIN user ON customer.idUser = user.idUser
+        INNER JOIN linerequest ON servicerequest.idRequest = linerequest.idRequest
+        INNER JOIN service ON linerequest.idService = service.idService
+        INNER JOIN country ON customer.idCountry = country.idCountry
+        WHERE servicerequest.idRequest = $idRequest";
+      $result = mysqli_query($link, $query);
+      return $result;
     }
+
+    // public function getServiceBillbad($idRequest){
+    //     $found = $this->manager->getAll("SELECT servicerequest.idRequest as 'idRequest',
+    //       lastName, firstName,  address, postalCode, city, nameFr as 'country',  phoneNumber,
+    //       linerequest.idService as 'idservice', service.name as 'serviceName', linerequest.priceHT, linerequest.priceTTC
+    //       FROM servicerequest
+    //       INNER JOIN customer ON servicerequest.idCustomer = customer.idCustomer
+    //       INNER JOIN user ON customer.idUser = user.idUser
+    //       INNER JOIN linerequest ON servicerequest.idRequest = linerequest.idRequest
+    //       INNER JOIN service ON linerequest.idService = service.idService
+    //       INNER JOIN country ON customer.idCountry = country.idCountry
+    //       WHERE servicerequest.idRequest = $idRequest");
+    //     return $found;
+    // }
+
 
     public function timestampToDate($mon_timestamp) {
         return date('Ymd', $mon_timestamp);
