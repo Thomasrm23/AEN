@@ -10,6 +10,7 @@ $manager = new DataBaseManager();
 // Recuperation des donnees de tous les membres
 $activityManager = new ActivityManager($manager);
 $result = $activityManager->getActivityToPlan();
+
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +55,8 @@ $result = $activityManager->getActivityToPlan();
 	<section class="contact-page-area section-gap">
 		<div class="container">
 			<div class="row justify-content-center">
-        <div class="table-wrap col-lg-10">
+        <div class="table-wrap col-lg-12">
+          <div><b><p align="center">VEUILLEZ SELECTIONNER UNE LIGNE</p></b></div>
 					<table class="schdule-table table table-bordered">
 						<thead class="thead-light">
               <th></th>
@@ -68,12 +70,12 @@ $result = $activityManager->getActivityToPlan();
               <?php
               $i=0;
               while($row = mysqli_fetch_array($result)) {
-              if($i%2==0)
-              $classname="evenRow";
-              else
-              $classname="oddRow";
+              // if($i%2==0)
+              // $classname="evenRow";
+              // else
+              // $classname="oddRow";
               ?>
-              <tr class="<?php if(isset($classname)) echo $classname;?>">
+              <!-- <tr class="<?php if(isset($classname)) echo $classname;?>"> -->
               <td><input type="radio" name="activityChecked" id="activityChecked" value="<?php echo $row["idActivity"]; ?>" ></td>
               <td><?php echo $row["nameActivityType"]; ?></td>
               <td><?php echo $row["idMember"]; ?></td>
@@ -89,11 +91,9 @@ $result = $activityManager->getActivityToPlan();
 				  </table>
 			  </div>
       </div>
-
         <div class="row justify-content-center" >
-
             <button class="genric-btn primary" type="submit" name="buttonUpdate" id="buttonUpdate" onClick="setUpdateAction()">Mettre à jour</button>
-            <button class="genric-btn primary" type="submit" name="buttonDelete" id="buttonDelete" onClick="setDeleteAction()">Supprimer
+            <button class="genric-btn primary" type="submit" name="buttonDelete" id="buttonDelete" onClick="setDeleteAction()">Supprimer</button>
 		</div>
 	</section>
 	<footer>
@@ -116,16 +116,16 @@ $result = $activityManager->getActivityToPlan();
  <script type="text/javascript">
 
  function setDeleteAction() {
-    if(confirm("Voulez-vous vraiment supprimer cette activité ?")) {
+    // if(confirm("Voulez-vous vraiment supprimer cette activité ?")) {
       document.frmActivityPlan.action = "../api/activity/deleteActivity.php";
       document.frmActivityPlan.submit();
-    }
+    // }
   }
 
   function setUpdateAction() {
       document.frmActivityPlan.action = "activityEdit.php";
       document.frmActivityPlan.submit();
-   }
+  }
 
  </script>
 </form>

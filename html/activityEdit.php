@@ -6,13 +6,7 @@ require_once __DIR__ . '/../api/manager/ActivityManager.php';
 require_once __DIR__ . '/../api/pdo.php';
 header("Access-Control-Allow-Origin: *");
 
-// Fonction ALert Message
-function function_alert($message) {
-    // Display the alert box
-    echo "<script>alert('$message');</script>";
-}
-
-// Verifier si une ligne est cochee
+// Verifier si une ligne est selectionnee
 if(isset($_POST["activityChecked"])){
   $idActivity = $_POST["activityChecked"];
   $manager = new DatabaseManager();
@@ -20,9 +14,7 @@ if(isset($_POST["activityChecked"])){
   $row = $activityManager->getActivityToEdit($idActivity);
 }
 else {
-  // Function call
   header("Location: activityPlan.php");
-  //function_alert("Veuillez cocher une ligne");
 }
 
 ?>
@@ -90,24 +82,30 @@ else {
               <tr>
               <td><label>Instructeur</label></td>
               <td>
-                <select type="text" name="idInstructor" id="idInstructor">
+                <div style="display: none; color: #f55;" id="InstructorNeeded"></div>
+                <div style="display: none; color: #f55;" id="activityInstructorExist"></div>
+                <select type="text" name="idInstructor" id="idInstructor" onchange="NoError();">
                   <option value="">Votre choix</option>
                 </select>
               </tr>
               <tr>
               <td><label>Engin</label></td>
               <td>
-                <select type="text" name="idAircraft" id="idAircraft">
+                <div style="display: none; color: #f55;" id="AircraftNeeded"></div>
+                <div style="display: none; color: #f55;" id="activityAircraftExist"></div>
+                <select type="text" name="idAircraft" id="idAircraft" onchange="NoError();">
                   <option value="">Votre choix</option>
                 </select>
               </tr>
               <tr>
+              <div style="display: none; color: #f55;" id="DatesNeeded"></div>
+              <div style="display: none; color: #f55;" id="DatesNoEgal"></div><div style="display: none; color: #f55;" id="HorsSaisonError"></div><div style="display: none; color: #f55;" id="DatePassedError"></div><div style="display: none; color: #f55;" id="DatesNotValid"></div>
               <td><label>Date début</label></td>
-              <td><input type="datetime-local" name="dateBegin" id="dateBegin" value="<?php echo $row['dateBegin']; ?>"></td>
+              <td><input type="datetime-local" name="dateBegin" id="dateBegin" value="<?php echo $row['dateBegin']; ?>" onchange="NoError();"></td>
               </tr>
               <tr>
               <td><label>Date fin</label></td>
-              <td><input type="datetime-local" name="dateEnd" id="dateEnd" value="<?php echo $row['dateEnd']; ?>"></td>
+              <td><input type="datetime-local" name="dateEnd" id="dateEnd" value="<?php echo $row['dateEnd']; ?>" onchange="NoError();"></td>
               </tr>
               </table>
     			  </div>
@@ -137,6 +135,18 @@ else {
       <script src="../js/main.js"></script>
       <script src="../js/isCo.js"></script>
       <script type="text/javascript">
+
+      function NoError() {
+        document.getElementById("DatesNeeded").style.display = "none";
+        document.getElementById("InstructorNeeded").style.display = "none";
+        document.getElementById("AircraftNeeded").style.display = "none";
+        document.getElementById("DatesNoEgal").style.display = "none";
+        document.getElementById("HorsSaisonError").style.display = "none";
+        document.getElementById("DatePassedError").style.display = "none";
+        document.getElementById("DatesNotValid").style.display = "none";
+        document.getElementById("activityInstructorExist").style.display = "none";
+        document.getElementById("activityAircraftExist").style.display = "none";
+      }
 
       window.onload = function() {
 
@@ -210,20 +220,61 @@ else {
             },
            error: function(xhr, status, error){
                console.log(xhr.responseText);
-               console.log(data1);
-
-               // showError(JSON.parse(xhr.responseText));
+               showError(JSON.parse(xhr.responseText));
                window.location.replace("activityEdit.php");
            }
           })
          })
 
-        // Clic sur Annuler du formulaire
+        // Clic sur Quitter du formulaire
         $(document).on('click','#buttonQuit',function(){
           window.location.replace("activityPlan.php");
         })
-
       })
+
+      function showError(error){
+        for(let i = 0; i < Object.keys(error).length; i++){
+          switch(error[i]){
+          case 'DatesNeeded':
+            document.getElementById("DatesNeeded").style.display = "flex";
+            $('#DatesNeeded').text('Veuillez saisir les dates.').show();
+            break;
+          case 'InstructorNeeded':
+            document.getElementById("InstructorNeeded").style.display = "flex";
+            $('#InstructorNeeded').text('Veuillez saisir un instructeur.').show();
+            break;
+          case 'AircraftNeeded':
+            document.getElementById("AircraftNeeded").style.display = "flex";
+            $('#AircraftNeeded').text('Veuillez saisir un engin.').show();
+            break;
+          case 'DatesNoEgal':
+            document.getElementById("DatesNoEgal").style.display = "flex";
+            $('#DatesNoEgal').text('Date début et fin le même jour.').show();
+            break;
+          case 'HorsSaisonError':
+            document.getElementById("HorsSaisonError").style.display = "flex";
+            $('#HorsSaisonError').text('Hors-saison ouvert uniquement jour férie et weekend.').show();
+            break;
+          case 'DatePassedError':
+            document.getElementById("DatePassedError").style.display = "flex";
+            $('#DatePassedError').text('Date passée.').show();
+            break;
+          case 'DatesNotValid':
+            document.getElementById("DatesNotValid").style.display = "flex";
+            $('#DatesNotValid').text('Dates non valides.').show();
+            break;
+          case 'activityInstructorExist':
+            document.getElementById("activityInstructorExist").style.display = "flex";
+            $('#activityInstructorExist').text("L\'instructeur est déjà reservé sur ce creneau.").show();
+            break;
+          case 'activityAircraftExist':
+            document.getElementById("activityAircraftExist").style.display = "flex";
+            $('#activityAircraftExist').text("L\'avion est déjà reservé sur ce creneau.").show();
+            break;
+          }
+        }
+      }
+
 
       </script>
       </form>

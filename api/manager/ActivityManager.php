@@ -77,25 +77,25 @@ class ActivityManager{
       // Verifier si chevauchement des dates avec un créneau existant pour l'instructeur choisi
       $foundInstructor = $this->manager->find("SELECT idActivity
         FROM activity
-        WHERE ((dateBegin BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
-        OR (dateEnd BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
-        OR ('" . $dateBeginStr . "' BETWEEN dateBegin AND dateEnd))
-        AND idInstructor = ?', [$idInstructor]");
+        WHERE ((dateBegin BETWEEN '" . $dateBeginTime . "' AND '" . $dateEndTime . "')
+        OR (dateEnd BETWEEN '" . $dateBeginTime . "' AND '" . $dateEndTime . "')
+        OR ('" . $dateBeginTime . "' BETWEEN dateBegin AND dateEnd))
+        AND idInstructor = $idInstructor");
 
       if($foundInstructor !== null){
-        $error->append("Attention ! L'instructeur est déjà reservé sur ce creneau.");
+        $error->append("activityInstructorExist");
       }
 
       // Verifier si chevauchement des dates avec un créneau existant pour l'avion choisi
       $foundAircraft = $this->manager->find("SELECT idActivity
         FROM activity
-        WHERE ((dateBegin BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
-        OR (dateEnd BETWEEN '" . $dateBeginStr . "' AND '" . $dateEndStr . "')
-        OR ('" . $dateBeginStr . "' BETWEEN dateBegin AND dateEnd))
-        AND $idAircraft = ?', [$idAircraft]");
+        WHERE ((dateBegin BETWEEN '" . $dateBeginTime . "' AND '" . $dateEndTime . "')
+        OR (dateEnd BETWEEN '" . $dateBeginTime . "' AND '" . $dateEndTime . "')
+        OR ('" . $dateBeginTime . "' BETWEEN dateBegin AND dateEnd))
+        AND $idAircraft = $idAircraft");
 
       if($foundAircraft !== null){
-        $error->append("Attention ! L'avion est déjà reservé sur ce creneau.");
+        $error->append("activityAircraftExist");
       }
 
       if(count($error) == 0) {
@@ -113,7 +113,7 @@ class ActivityManager{
                 $idMember
             ]);
 
-        if($add == 0) {
+        if($add === 0) {
           $error = "ErreurAddActivity";
           return $error;
         } else {
@@ -132,7 +132,6 @@ class ActivityManager{
           return "ok";
         }
     }
-
 
     public function getRandomStr($n) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -221,14 +220,6 @@ class ActivityManager{
 
       $error = new ArrayObject();
 
-      if(($instructorNeeded == 1) && (!isset($idInstructor))) {
-        $error->append("InstructorNeeded");
-      }
-
-      if(!isset($idAircraft)) {
-        $error->append("AircraftNeeded");
-      }
-
       $dateBeginCheck = date_create($dateBegin);
       $dateEndCheck = date_create($dateEnd);
       $dateBeginOK = checkdate($dateBeginCheck->format('m'), $dateBeginCheck->format('d'), $dateBeginCheck->format('Y'));
@@ -262,7 +253,7 @@ class ActivityManager{
               // echo 'Ouvert tous les jours';
             } else {
               // echo 'Hors-saison ouvert samedi, dimanche et jf';
-              if((check_weekend($datetime) == 1) || jour_ferie(mktime(0,0,0,$dateDMY[1],$dateDMY[2],$dateDMY[0])) == 1){
+              if( ($this->check_weekend($datetime) == 1) || ($this->jour_ferie(mktime(0,0,0,$dateDMY[1],$dateDMY[2],$dateDMY[0])) == 1)) {
                 // echo 'Nous sommes un jour férié, samedi ou dimanche !! OK !!';
                 // verifier si jour = samedi, dimanche
                 // 6 = Samedi ou 7 = Dimanche
@@ -281,22 +272,34 @@ class ActivityManager{
          $error->append("DatesNotValid");
       }
 
+      // Si pas erreur de validation
       if(count($error) == 0) {
-        // Update des donnees
-        $update = $this->manager->exec("UPDATE activity
-          SET idInstructor = $idInstructor, idAircraft = $idAircraft, dateBegin = '" . $dateBeginStr . "', dateEnd = '" . $dateEndStr . "'
-          WHERE idActivity = $idActivity");
-          // $update = $this->manager->exec("UPDATE activity
-          //   SET idInstructor = $idInstructor, idAircraft = $idAircraft, dateBegin = '20200804', dateEnd = '20200804'
-          //   WHERE idActivity = $idActivity");
-          // Test retour
-          if($update == 0) {
-            $error->append("ErreurUpdate");
-            return $error;
-          } else {
-            return "ok";
+
+        // Recherche si l'instructeur ou l'avion n'est pas deja reserve sur ce creneau
+        $creneaulibre = new ArrayObject();
+        $creneaulibre = $this->ifExistActivity($idAircraft, $idInstructor, $dateBegin, $dateEnd);
+
+        //  Si creneau libre, mise a jour
+         if($creneaulibre == "ok"){
+
+          // Update des donnees
+          $update = $this->manager->exec("UPDATE activity
+            SET idInstructor = $idInstructor, idAircraft = $idAircraft, dateBegin = '" . $dateBeginStr . "', dateEnd = '" . $dateEndStr . "'
+            WHERE idActivity = $idActivity");
+            // Test retour
+            if($update == 0) {
+              $error->append("ErreurUpdate");
+              return $error;
+            } else {
+              return "ok";
+            }
+
+          }else{
+             // Erreur si deja reserve
+             return $creneaulibre;
           }
 
+        // Si des erreurs de validation trouvees
         } else {
           return $error;
         }

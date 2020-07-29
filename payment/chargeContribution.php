@@ -38,13 +38,13 @@ $contributionManager = new RegisterMemberManager($manager);
 //   $amount = $_SESSION['contribution'];
 // }
 //
-echo $_SESSION['idMember'];
+
 if(isset($_SESSION['idMember'])){
 
-    $contribution = $contributionManager->getContribution($_SESSION['idMember']);
+    $idMember = $_SESSION['idMember'];
+    $contribution = $contributionManager->getContribution($idMember);
     // var_dump($contribution);
     $amount = $contribution[0]['feeContribution'];
-     echo $amount;
 }
 
 //$amount = $intervention['duration'] * $intervention['price']*100;
@@ -80,7 +80,7 @@ $paymentData = [
   'amount' => $charge->amount,
   'currency' => $charge->currency,
   'status' => $charge->status,
-  'idMember' => $_SESSION['idMember']
+  'idMember' => $idMember
 ];
 
 // Instantiate Transaction
@@ -88,13 +88,11 @@ $paymentContribution = new PaymentContribution();
 
 // Add Transaction To DB
 $paymentContribution->addPaymentContribution($paymentData);
-$dateToday = date('m-d-Y');
-echo $dateToday;
-$updateContribution = $contributionManager->updateContributionDate($_SESSION['idMember'], "2020-07-22");
-if($updateContribution == "ok"){
+$updateContribution = $contributionManager->updateContributionDate($idMember);
 
+if($updateContribution == "ok"){
   // Redirect to success
-  //header('Location: ../html/success.php?id='.$charge->id.'&cardHolder='.$cardHolder);
+  header('Location: ../html/successContribution.php?id='.$charge->id.'&cardHolder='.$cardHolder);
 
 }
 

@@ -1,18 +1,12 @@
 <?php
 
-require_once __DIR__ . '/../api/DataBaseManager.php';
-require_once __DIR__ . '/../api/manager/RegisterMemberManager.php';
 
 session_start();
 
-$manager = new DataBaseManager();
-$contributionManager = new RegisterMemberManager($manager);
-
-// Recuperation de la cotisation
-if(isset($_SESSION['idMember'])){
-    $idMember = $_SESSION['idMember'];
-    $contribution = $contributionManager->getContribution($_SESSION['idMember']);
-    $amount = $contribution[0]['feeContribution'];
+// Recuperation du montant
+if(isset($_SESSION['amount'])){
+  $amount = $_SESSION['amount'];
+   $idRequest = $_SESSION['idRequest'];
 }
 
 ?>
@@ -27,7 +21,7 @@ if(isset($_SESSION['idMember'])){
     <meta name="description" content="">
     <meta name="author" content="">
 
-	<title>Paiement de la cotisation</title>
+	<title>Paiement de la commande</title>
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700" rel="stylesheet">
 
@@ -56,11 +50,11 @@ if(isset($_SESSION['idMember'])){
 			<div class="row d-flex align-items-center justify-content-center">
 				<div class="about-content col-lg-12">
 					<h1>
-						Paiement de la cotisation
+						Paiement de la commande
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="paymentContribution.php">
-							Paiement de la cotisation</a></p>
+						<span class="lnr lnr-arrow-right"></span> <a href="paymentService.php">
+							Paiement de la commande</a></p>
 				</div>
 			</div>
 		</div>
@@ -69,13 +63,13 @@ if(isset($_SESSION['idMember'])){
 		<div class="container">
 			<div class="row">
         <div class="col-lg-12 form-group" style="display:flex; justify-content:center">
-          <form action="../payment/chargeContribution.php" method="post" id="payment-form">
+          <form action="../payment/chargeService.php" method="post" id="payment-form">
             <div class="form-row">
               <div style="display:flex; justify-content:flex-start;">
-                  <h3> Montant : <?php echo $amount ?> </h3>
+                  <h3> Montant : <?php echo $amount ?>  </h3>
                   <!-- <h3 value="" id="amount" name="amount"></h3> -->
                   <h3> €</h3>
-
+                  <h3><?php echo $idRequest ?></h3>
               </div>
               <input type="text" name="cardHolder" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Titulaire de la carte">
 
@@ -86,7 +80,7 @@ if(isset($_SESSION['idMember'])){
               <!-- Used to display form errors -->
               <div id="card-errors" role="alert"></div>
             </div>
-            <div style="display:flex; justify-content:space-between;;">
+            <div style="display:flex; justify-content:space-between;">
             <button style="width:40%;">Payer</button>
 
             <button class="btn btn-primary btn-block mt-4" style="width:40%;" onclick="window.location.href='index.html'"> Annuler </button>

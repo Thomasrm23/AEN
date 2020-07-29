@@ -3,6 +3,7 @@
 <head>
 <meta charset='utf-8' />
 <link href='../api/calendar/main.css' rel='stylesheet' />
+<script src="../jquery/jquery-3.2.1.min.js"></script>
 <script src='../api/calendar/main.js'></script>
 
 <script>
@@ -47,17 +48,79 @@
           method: 'POST'
        }
     });*/
-resources:
- {
-     url: '../api/calendar/resources.php',
-     method: 'POST'
-  },
-  events:
-  {
-      url: '../api/calendar/event.php',
-      method: 'POST'
-   }
-});
+      resources:
+       {
+           url: '../api/calendar/resources.php',
+           method: 'POST'
+        },
+        events:
+        {
+            url: '../api/calendar/event.php',
+            method: 'POST'
+         },
+         editable: true,
+         selectable: true,
+         // eventClick: function(info){
+         //   var eventDelete= $('#id').val() ;
+         //   $.ajax({
+         //                   type: 'POST',
+         //                   url: "../api/calendar/event.php",
+         //                   dataType: 'json',
+         //                   // headers:{"X-CSRFToken": csrftoken},
+         //                   encode: true,
+         //                   data: {'pk': eventDelete},
+         //                   success: function (data) {
+         //                     info.event.remove();
+         //                   },
+         //                    error:function(xhr){
+         //                         alert('error');
+         //                     }
+         //          });
+         //        }
+
+           // calendar.getEventById($('#event_id').val())
+
+
+         eventClick: function (event) {
+            // var dataRow = {'pk': event.id};
+
+            var deleteMsg = confirm("Voulez-vous vraiment supprimer cette activité ?");
+            var event_id = event.id;
+
+            if (deleteMsg) {
+                $.ajax({
+
+                  type:"POST",
+                  url: "../api/calendar/deleteEvent.php",
+                  data: "pk=" + event_id,
+
+                    // type: 'POST',
+                    // url: '../api/calendar/deleteEvent.php',
+                    // dataType: "json",
+                    // data: JSON.stringify(dataRow),
+                    // async: true,
+                    // processData:false,
+                    // cache:false,
+                    // success: function (data) {
+                    //  alert(data);
+                    //  $('#calendar').fullCalendar('refetchEvents');
+                    //
+                    //  },
+                    // error:function(xhr){
+                    //      alert('error');
+                    //  }
+                    // data: "&id=" + event.id,
+                    // success: function (response) {
+                    //     if(parseInt(response) > 0) {
+                    //         $('#calendar').fullCalendar('removeEvents', event.id);
+                    //         displayMessage("Deleted Successfully");
+                    //     }
+                    // }
+                });
+              }
+            }
+      });
+      // });
 
     /*  resources: [
         { id: 'a', title: 'Auditorium A', occupancy: 40 },

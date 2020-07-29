@@ -3,17 +3,19 @@
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once __DIR__ . '/../manager/RegisterCustomerManager.php';
 
-    header("Access-Control-Allow-Origin: *");
-  //  header('Content-type: application/json');
+header("Access-Control-Allow-Origin: *");
+header('Content-type: application/json');
 
-//$lastName = $_POST['lastName'];
-
-//echo $lastName;
 $json = json_decode($_POST['data'], true);
+$error = new ArrayObject();
 
-
-if (isset($json['lastName']) && isset($json['firstName']) && isset($json['email']) && isset($json['country']) && isset($json['login']) && isset($json['password']) && isset($json['confirmPassword'])){
-
+if (isset($json['lastName']) &&
+    isset($json['firstName']) &&
+    isset($json['email']) &&
+    isset($json['country']) &&
+    isset($json['login']) &&
+    isset($json['password']) &&
+    isset($json['confirmPassword'])){
 
     $manager = new DataBaseManager();
     $registerCustomer = new RegisterCustomerManager($manager);
@@ -24,18 +26,21 @@ if (isset($json['lastName']) && isset($json['firstName']) && isset($json['email'
     $json['country'],
     $json['login'],
     $json['password'],
-    $json['confirmPassword']
-);
-
+    $json['confirmPassword']);
 
     if($result == "ok"){
         http_response_code(200);
         die();
     }
-    http_response_code(402);
-    echo json_encode($result);
-    die();
+    else{
+      http_response_code(402);
+      echo json_encode($result);
+      die();
+    }
 }
-http_response_code(400);
-echo "empty";
-die();
+else{
+  $error->append("requiredfields");
+  http_response_code(400);
+  echo json_encode($error);
+  die();
+}

@@ -7,6 +7,7 @@ header("Access-Control-Allow-Origin: *");
 
 // Mise en place de la connexion
 $manager = new DataBaseManager();
+
 // Recuperation des donnees de tous les membres
 $registerMember = new RegisterMemberManager($manager);
 $account = $registerMember->getAccountAdmin();
@@ -45,7 +46,7 @@ $account = $registerMember->getAccountAdmin();
 						Consulter les comptes des membres
 					</h1>
 					<p class="link-nav"><a href="index.html">Accueil </a>
-						<span class="lnr lnr-arrow-right"></span> <a href="activityPlan.php">
+						<span class="lnr lnr-arrow-right"></span> <a href="accountAdmin.php">
 						  Consulter les comptes des membres </a></p>
 				</div>
 			</div>
@@ -54,6 +55,7 @@ $account = $registerMember->getAccountAdmin();
 	<section class="contact-page-area section-gap">
 		<div class="container">
 			<div class="row justify-content-center">
+        <div><b><p align="center">VEUILLEZ SELECTIONNER UNE LIGNE</p></b></div>
         <div class="table-wrap col-lg-10">
 					<table class="schdule-table table table-bordered">
 						<thead class="thead-light">
@@ -75,12 +77,12 @@ $account = $registerMember->getAccountAdmin();
               <?php
               $i=0;
               while($row = mysqli_fetch_array($account)) {
-                if($i%2==0)
-                $classname="evenRow";
-                else
-                $classname="oddRow";
+                // if($i%2==0)
+                // $classname="evenRow";
+                // else
+                // $classname="oddRow";
               ?>
-              <tr class="<?php if(isset($classname)) echo $classname;?>">
+              <!-- <tr class="<?php if(isset($classname)) echo $classname;?>"> -->
               <td><input type="radio" name="memberChecked" id="memberChecked" value="<?php echo $row["idMember"]; ?>" ></td>
               <td ><?php echo $row["lastName"]; ?></td>
               <td><?php echo $row["firstName"]; ?></td>
@@ -130,25 +132,25 @@ $account = $registerMember->getAccountAdmin();
  <script type="text/javascript">
 
 function setDeleteAction() {
-   if(confirm("Voulez-vous vraiment supprimer ce membre ?")) {
+   // if(confirm("Voulez-vous vraiment supprimer ce membre ?")) {
      document.frmAccountAdmin.action = "../api/register/deleteMember.php";
      document.frmAccountAdmin.submit();
-   }
+   // }
  }
 
- // window.onload = function() {
- //
- //   // Afficher en rouge "NON" si contribution non payee
- //   if(document.getElementById("contributionPayed").value = "NON")
- //   {
- //     document.getElementById("contributionPayed").style.color="red";
- //   }
- //   else
- //   {
- //     document.getElementById("contributionPayed").style.color="#777777";
- //   }
- //
- // };
+ window.onload = function() {
+
+   // Afficher en rouge "NON" si contribution non payee
+   if(document.getElementById("contributionPayed").value = "NON")
+   {
+     document.getElementById("contributionPayed").style.color="red";
+   }
+   else
+   {
+     document.getElementById("contributionPayed").style.color="#777777";
+   }
+
+ };
 
  </script>
 </form>

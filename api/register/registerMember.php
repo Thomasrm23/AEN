@@ -3,12 +3,13 @@
 require_once __DIR__ . '/../DataBaseManager.php';
 require_once __DIR__ . '/../manager/RegisterMemberManager.php';
 
-  //  header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 header('Content-type: application/json');
 
 
 $json = json_decode($_POST['data'], true);
 
+$error = new ArrayObject();
 
 if (isset($json['lastName']) &&
     isset($json['firstName']) &&
@@ -17,14 +18,11 @@ if (isset($json['lastName']) &&
     isset($json['city']) &&
     isset($json['phoneNumber']) &&
     isset($json['birthDate']) &&
-    // isset($json['memberOutside']) &&
-    // isset($json['clubOutside']) &&
     isset($json['license']) &&
     isset($json['email']) &&
     isset($json['login']) &&
     isset($json['password']) &&
     isset($json['confirmPassword'])){
-
 
     $manager = new DataBaseManager();
     $registerMember = new RegisterMemberManager($manager);
@@ -47,32 +45,19 @@ if (isset($json['lastName']) &&
         $json['password'],
         $json['confirmPassword']);
 
-
-
     if($result == "ok"){
-
-      // repasser l'amount vers la page de payment
-      // $contribution = $registerMember->getContribution($_SESSION['idMember']);
-      // $_SESSION['contribution'] = $contribution;
-
-      // if (checkdate($json['birthDate']->format('m'), $json['birthDate']->format('d'), $json['birthDate']->format('Y'))){
-      //   if ($contribution != null) {
-      //       echo json_encode($contribution);
-      //   }
-
-    //  }
-        http_response_code(200);
-        die();
+      http_response_code(200);
+      die();
     }
     else{
-    http_response_code(402);
-    echo json_encode($result);
-    die();
+      http_response_code(402);
+      echo json_encode($result);
+      die();
     }
 }
 else{
-http_response_code(400);
-echo "empty";
-// echo json_encode($contribution);
-die();
+  $error->append("requiredfields");
+  http_response_code(400);
+  echo json_encode($error);
+  die();
 }

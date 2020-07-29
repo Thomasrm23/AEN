@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../pdo.php';
 require_once __DIR__ . '/../DataBaseManager.php';
 
 class ServiceManager{
@@ -8,6 +9,46 @@ class ServiceManager{
     public function __construct($manager)
     {
         $this->manager = $manager;
+    }
+
+    public function getServiceAll(){
+      $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+      $query = "SELECT idRequest, lastname, firstName, nameFr as 'country',
+      serviceDate, requestDate, stateRequest,
+      (CASE WHEN basedChoice = 1 THEN 'OUI' ELSE 'NON' END) as 'basedChoice',
+      servicerequest.idCustomer as 'idCustomer', customer.idUser as 'idUser'
+      FROM servicerequest
+      INNER JOIN customer ON servicerequest.idCustomer = customer.idCustomer
+      INNER JOIN user ON customer.idUser = user.idUser
+      INNER JOIN country ON customer.idCountry = country.idCountry";
+      $result = mysqli_query($link, $query);
+      return $result;
+    }
+
+    public function getServiceCustomer($idCustomer){
+      $found = $this->manager->getAll("SELECT idRequest, lastname, firstName, nameFr as 'country',
+      serviceDate, requestDate, stateRequest,
+      (CASE WHEN basedChoice = 1 THEN 'OUI' ELSE 'NON' END) as 'basedChoice',
+      servicerequest.idCustomer as 'idCustomer', customer.idUser as 'idUser'
+      FROM servicerequest
+      INNER JOIN customer ON servicerequest.idCustomer = customer.idCustomer
+      INNER JOIN user ON customer.idUser = user.idUser
+      INNER JOIN country ON customer.idCountry = country.idCountry
+      WHERE servicerequest.idCustomer = $idCustomer");
+      return $found;
+    }
+
+    public function getServiceBill($idRequest){
+        $found = $this->manager->find("SELECT servicerequest.idRequest as 'idRequest',
+          lastname, firstName,  address, postalCode, city, nameFr as 'country',  phoneNumber,
+          linerequest.idService as 'idservice', service.name as 'serviceName', priceHT, priceTTC
+          FROM servicerequest
+          INNER JOIN customer ON servicerequest.idCustomer = customer.idCustomer
+          INNER JOIN user ON customer.idUser = user.idUser
+          INNER JOIN linerequest ON servicerequest.idRequest = linerequest.idRequest
+          INNER JOIN service ON linerequest.idService = service.idService
+          WHERE id = $idRequest");
+        return $found;
     }
 
     public function timestampToDate($mon_timestamp) {
@@ -34,7 +75,7 @@ class ServiceManager{
     }
 
     public function getTariffLanding($planeType, $based, $dayweek){
-      $found = $this->manager->getAll("SELECT priceHT, priceTTC FROM tarifflanding WHERE ((planeType = '" . $planeType . "') AND (basedChoice = $based) AND (dayweek = '" . $dayweek . "') )");
+      $found = $this->manager->getAll("SELECT idTariffLanding, priceHT, priceTTC FROM tarifflanding WHERE ((planeType = '" . $planeType . "') AND (basedChoice = $based) AND (dayweek = '" . $dayweek . "') )");
       return $found;
     }
 
@@ -64,11 +105,11 @@ class ServiceManager{
     }
 
     public function getTariffCovered($category, $based, $tariffType){
-      $found = $this->manager->getAll("SELECT priceHT, priceTTC FROM tariffCovered WHERE (category = $category) AND (basedChoice = $based) AND (tariffType = '" . $tariffType . "')");
+      $found = $this->manager->getAll("SELECT idTariffCovered, priceHT, priceTTC FROM tariffCovered WHERE (category = $category) AND (basedChoice = $based) AND (tariffType = '" . $tariffType . "')");
       return $found;
     }
 
-    public function get_month_diff($start, $end){
+    public function getMonthDiff($start, $end){
 
     	$start = new DateTime($start);
     	$end   = new DateTime($end);
@@ -77,12 +118,40 @@ class ServiceManager{
     	return $diff->format('%y') * 12 + $diff->format('%m');
     }
 
+    public function getDayDiff($start, $end){
+      $start = new DateTime($start);
+      $end   = new DateTime($end);
+      $diff  = $start->diff($end);
+
+      return $diff->format('%y') * 365 + $diff->format('%d');
+    }
+
+    public function getWeekDiff($start, $end){
+      $start = new DateTime($start);
+      $end   = new DateTime($end);
+      $diff  = $start->diff($end);
+
+      return $diff->format('%y') * 52 + $diff->format('%W');
+    }
+
+    public function updateStateRequest($idRequest, $amount){
+      $update = $this->manager->exec("UPDATE servicerequest SET stateRequest = 2, amount = $amount WHERE idRequest = $idRequest");
+      if($update == 0) {
+        $error = "ErreurUpdateStateRequest";
+        return $error;
+      } else {
+        return "ok";
+      }
+    }
 
 
     public function addServiceRequest($idCustomer, $serviceDate, $landing, $planeTypeChoice, $acousticGroup, $basedChoice, $dayweek, $markupDuration, $provisioning, $petrole, $quantity, $parking, $parkingType, $tariffType, $groundArea, $mass, $beginDate, $endDate, $cleaning, $weather){
 
       // Initialisation du nombre d'erreurs
       $error = new ArrayObject();
+
+      $validate = false;
+      $amount = 0;
 
       $serviceDateCreate = date_create($serviceDate);
 
@@ -159,290 +228,322 @@ $serviceDateStr = date("Y-m-d H:i",strtotime($serviceDate));
         ]);
         if($insertSR == 0) {
           $error->append("ErreurInsertServiceRequest");
-          return $error;
+          // return $error;
+          $validate = false;
         } else {
           $idRequest = $this->manager->getLastInsertId();
+          $validate = true;
         }
 
       }else{
-           return $error;
+           // return $error;
+           $validate = false;
       }
 
-//insert linerequest
-      // if(isset($idRequest)){
-      //
-      // }
-      // else{
-      //   return $error;
-      // }
-      if ($landing){
+      if ($validate == true){
 
-        if ($planeTypeChoice == 1){
-          $planeType = "TURBINE";
+        if ($landing){
+
+          if ($planeTypeChoice == 1){
+            $planeType = "TURBINE";
+          }
+          else if ($planeTypeChoice == 2){
+            $planeType = "REACTEUR";
+          }
+          else {
+            $error->append("planeTypeNotSet");
+            // return $error;
+          }
+
+          if(count($error) == 0) {
+            $tariffLanding = $this->getTariffLanding($planeType, $based, $dayweek);
+
+            $idTariffLanding = $tariffLanding[0]['idTariffLanding'];
+            $tariffLandingHT = $tariffLanding[0]['priceHT'];
+            $tariffLandingTTC = $tariffLanding[0]['priceTTC'];
+
+
+            $getMarkup = $this->getMarkup();
+
+            $idTariffMarkup = 1;
+            $markupHT = $getMarkup[0]['priceHT'];
+            $markupTTC = $getMarkup[0]['priceTTC'];
+
+
+            $getCoeff = $this->getCoeff($acousticGroup);
+
+            $coeffDay = $getCoeff[0]['coeffDay'];
+            $coeffNight = $getCoeff[0]['coeffNight'];
+
+            $hourLanding = date("H",strtotime($serviceDate));
+
+            if (($hourLanding < 22) && ($hourLanding >= 6)){
+              $coeff = $coeffDay;
+            }
+            else{
+              $coeff = $coeffNight;
+            }
+
+            $tariffLandingHTFinal = $tariffLandingHT * $coeff + ($markupHT * $markupDuration);
+            $tariffLandingTTCFinal = $tariffLandingTTC * $coeff + ($markupTTC * $markupDuration);
+            $amount += $tariffLandingTTCFinal;
+
+            $insertLRL = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
+              $idRequest,
+              1,
+              $tariffLandingHTFinal,
+              $tariffLandingTTCFinal
+            ]);
+            if($insertLRL == 0) {
+              $error->append("ErreurInsertLineRequestLanding");
+              // return $error;
+            }
+          }
+
+          if(count($error) == 0) {
+
+            $insertL = $this->manager->exec('INSERT INTO landing (idRequest, planeType, dayweek, markupDuration, idTariffLanding, idTariffMarkup, idAcousticGroup) VALUES (?,?,?,?,?,?)', [
+              $idRequest,
+              $planeType,
+              $dayweek,
+              $markupDuration,
+              $idTariffLanding,
+              $idTariffMarkup,
+              $acousticGroup
+            ]);
+            if($insertL == 0) {
+              $error->append("ErreurInsertLanding");
+              return $error;
+            } else {
+              $validate = true;
+            }
+          }
         }
-        else if ($planeTypeChoice == 2){
-          $planeType = "REACTEUR";
-        }
-        else {
-          $error->append("planeTypeNotSet");
-          return $error;
-        }
-
-        $tariffLanding = $this->getTariffLanding($planeType, $based, $dayweek);
-
-        $tariffLandingHT = $tariffLanding[0]['priceHT'];
-        $tariffLandingTTC = $tariffLanding[0]['priceTTC'];
 
 
-        $getMarkup = $this->getMarkup();
+        if ($provisioning){
 
-        $markupHT = $getMarkup[0]['priceHT'];
-        $markupTTC = $getMarkup[0]['priceTTC'];
+          $getPetrole = $this->getPetrole($petrole);
 
+          $pricePetroleHT = $getPetrole[0]['priceHT'];
+          $pricePetroleTTC = $getPetrole[0]['priceTTC'];
 
-        $getCoeff = $this->getCoeff($acousticGroup);
+          $priceProvisioningHT = $pricePetroleHT * $quantity;
+          $priceProvisioningTTC = $pricePetroleTTC * $quantity;
+          $amount += $priceProvisioningTTC;
 
-        $coeffDay = $getCoeff[0]['coeffDay'];
-        $coeffNight = $getCoeff[0]['coeffNight'];
-
-        $hourLanding = date("H",strtotime($serviceDate));
-
-        if (($hourLanding < 22) && ($hourLanding >= 6)){
-          $coeff = $coeffDay;
-        }
-        else{
-          $coeff = $coeffNight;
-        }
-
-        $tariffLandingHTFinal = $tariffLandingHT * $coeff + ($markupHT * $markupDuration);
-        $tariffLandingTTCFinal = $tariffLandingTTC * $coeff + ($markupTTC * $markupDuration);
-
-        $insertLRL = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
-          $idRequest,
-          1,
-          $tariffLandingHTFinal,
-          $tariffLandingTTCFinal
-        ]);
-        if($insertLRL == 0) {
-          $error->append("ErreurInsertLineRequestLanding");
-          return $error;
-        } else {
-
-        }
-
-        if(count($error) == 0) {
-
-          $insertL = $this->manager->exec('INSERT INTO landing (idRequest, planeType, dayweek, markupDuration) VALUES (?,?,?,?)', [
+          $insertLRPR = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
             $idRequest,
-            $planeType,
-            $dayweek,
-            $markupDuration
+            2,
+            $priceProvisioningHT,
+            $priceProvisioningTTC
           ]);
-          if($insertL == 0) {
-            $error->append("ErreurInsertLanding");
-            return $error;
-          } else {
-            // return "ok";
-          }
-        }
-      }
-
-
-      if ($provisioning){
-
-        $getPetrole = $this->getPetrole($petrole);
-
-        $pricePetroleHT = $getPetrole[0]['priceHT'];
-        $pricePetroleTTC = $getPetrole[0]['priceTTC'];
-
-        $priceProvisioningHT = $pricePetroleHT * $quantity;
-        $priceProvisioningTTC = $pricePetroleTTC * $quantity;
-
-        $insertLRPR = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
-          $idRequest,
-          2,
-          $priceProvisioningHT,
-          $priceProvisioningTTC
-        ]);
-        if($insertLRPR == 0) {
-          $error->append("ErreurInsertLineRequestProvisioning");
-          return $error;
-        } else {
-
-        }
-
-        if(count($error) == 0) {
-
-          $insertPR = $this->manager->exec('INSERT INTO provisioning (idRequest, idPetroleProduct, quantity) VALUES (?,?,?)', [
-            $idRequest,
-            $petrole,
-            $quantity
-          ]);
-          if($insertPR == 0) {
-            $error->append("ErreurInsertProvisioning");
-            return $error;
-          } else {
-            // return "ok";
-          }
-        }
-      }
-
-      if ($parking){
-
-        //feeCovered
-        if ($parkingType == "COV"){
-
-          $mass = (float)($mass / 1000);
-          $getCategory = $this->getCategory($groundArea, $mass);
-
-          $category = $getCategory[0]['category'];
-
-          $tariffCovered = $this->getTariffCovered($category, $based, $tariffType);
-
-          $tariffCoveredHT = $tariffCovered[0]['priceHT'];
-          $tariffCoveredTTC = $tariffCovered[0]['priceTTC'];
-
-          if ($tariffType == "J"){
-            //date_diff() nb jours
-
-          }
-
-          else if ($tariffType == "M"){
-            //date_diff() nb mois
-            $month = $this->get_month_diff($beginDate, $endDate);
-            $tariffHT = $tariffCoveredHT * $month;
-            $tariffTTC = $tariffCoveredTTC * $month;
-          }
-
-
-        }
-
-        //feeOutside
-        if ($parkingType == "OUT"){
-
-          $weekBegin = date("W",strtotime($beginDate));
-          $weekEnd = date("W",strtotime($endDate));
-          $weekNumber = $weekEnd - $weekBegin + 1;
-          // année a ajouter
-
-          $tariffOutside = $this->getTariffOutside();
-
-          $tariffOutsideHT = $tariffOutside[0]['priceHT'];
-          $tariffOutsideTTC = $tariffOutside[0]['priceTTC'];
-
-          $tariffHT = $tariffOutsideHT * $groundArea * $weekNumber;
-          $tariffTTC = $tariffOutsideTTC * $groundArea * $weekNumber;
-        }
-
-        $insertLRPA = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
-          $idRequest,
-          3,
-          $tariffHT,
-          $tariffTTC
-        ]);
-        if($insertLRPA == 0) {
-          $error->append("ErreurInsertLineRequestParking");
-          return $error;
-        } else {
-
-        }
-
-        if(count($error) == 0) {
-
-          $insertPA = $this->manager->exec('INSERT INTO parking (idRequest, parkingType, beginDate, endDate) VALUES (?,?,?,?)', [
-            $idRequest,
-            $parkingType,
-            $beginDate,
-            $endDate
-          ]);
-          if($insertPA == 0) {
-            $error->append("ErreurInsertParking");
-            return $error;
-          } else {
-
-          }
-        }
-
-        if ($parkingType == "COV"){
-          $insertFC = $this->manager->exec('INSERT INTO feecovered (idRequest, groundArea, mass, category, basedChoice) VALUES (?,?,?,?,?)', [
-            $idRequest,
-            $groundArea,
-            $mass,
-            $category,
-            $based
-          ]);
-          if($insertFC == 0) {
-            $error->append("ErreurInsertFeeCovered");
+          if($insertLRPR == 0) {
+            $error->append("ErreurInsertLineRequestProvisioning");
             return $error;
           } else {
 
           }
 
+          if(count($error) == 0) {
+
+            $insertPR = $this->manager->exec('INSERT INTO provisioning (idRequest, idPetroleProduct, quantity) VALUES (?,?,?)', [
+              $idRequest,
+              $petrole,
+              $quantity
+            ]);
+            if($insertPR == 0) {
+              $error->append("ErreurInsertProvisioning");
+              return $error;
+            } else {
+              // return "ok";
+            }
+          }
         }
 
-        if ($parkingType == "OUT"){
-          $insertFO = $this->manager->exec('INSERT INTO feeoutside (idRequest, groundArea, weekNumber, idTariffOutside) VALUES (?,?,?,?)', [
+        if ($parking){
+
+          //feeCovered
+          if ($parkingType == "COV"){
+
+            $mass = (float)($mass / 1000);
+            $getCategory = $this->getCategory($groundArea, $mass);
+
+            $category = $getCategory[0]['category'];
+
+            $tariffCovered = $this->getTariffCovered($category, $based, $tariffType);
+
+            $idTariffCovered = $tariffCovered[0]['idTariffCovered'];
+            $tariffCoveredHT = $tariffCovered[0]['priceHT'];
+            $tariffCoveredTTC = $tariffCovered[0]['priceTTC'];
+
+            if ($tariffType == "J"){
+              //date_diff() nb jours
+              $day = $this->getDayDiff($beginDate, $endDate);
+              $tariffHT = $tariffCoveredHT * $day + 1;
+              $tariffTTC = $tariffCoveredTTC * $day + 1;
+              $amount += $tariffTTC;
+            }
+
+            else if ($tariffType == "M"){
+              //date_diff() nb mois
+              $month = $this->getMonthDiff($beginDate, $endDate);
+              $tariffHT = $tariffCoveredHT * $month + 1;
+              $tariffTTC = $tariffCoveredTTC * $month + 1;
+              $amount += $tariffTTC;
+            }
+
+          }
+
+          //feeOutside
+          if ($parkingType == "OUT"){
+
+        //     $weekBegin = date("W",strtotime($beginDate));
+          //   $weekEnd = date("W",strtotime($endDate));
+            // $weekNumber = $weekEnd - $weekBegin + 1;
+            $weekNumber = $this->getWeekDiff($beginDate, $endDate);
+
+
+            // année a ajouter
+            if ($weekNumber == 1){
+              $weekNumber = 2;
+            }
+
+            $tariffOutside = $this->getTariffOutside();
+
+            $idTariffOutside = 1;
+            $tariffOutsideHT = $tariffOutside[0]['priceHT'];
+            $tariffOutsideTTC = $tariffOutside[0]['priceTTC'];
+
+            $tariffHT = $tariffOutsideHT * $groundArea * $weekNumber + 1;
+            $tariffTTC = $tariffOutsideTTC * $groundArea * $weekNumber + 1;
+            $amount += $tariffTTC;
+          }
+
+          $insertLRPA = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
             $idRequest,
-            $groundArea,
-            $weekNumber,
-            1
+            3,
+            $tariffHT,
+            $tariffTTC
           ]);
-          if($insertFO == 0) {
-            $error->append("ErreurInsertFeeOutside");
+          if($insertLRPA == 0) {
+            $error->append("ErreurInsertLineRequestParking");
             return $error;
           } else {
 
           }
 
+          if(count($error) == 0) {
+
+            $insertPA = $this->manager->exec('INSERT INTO parking (idRequest, parkingType, beginDate, endDate) VALUES (?,?,?,?)', [
+              $idRequest,
+              $parkingType,
+              $beginDate,
+              $endDate
+            ]);
+            if($insertPA == 0) {
+              $error->append("ErreurInsertParking");
+              return $error;
+            } else {
+
+            }
+          }
+
+          if ($parkingType == "COV"){
+            $insertFC = $this->manager->exec('INSERT INTO feecovered (idRequest, groundArea, mass, category, basedChoice, tariffType, idTariffCovered) VALUES (?,?,?,?,?,?,?)', [
+              $idRequest,
+              $groundArea,
+              $mass,
+              $category,
+              $based,
+              $tariffType,
+              $idTariffCovered
+            ]);
+            if($insertFC == 0) {
+              $error->append("ErreurInsertFeeCovered");
+              return $error;
+            } else {
+
+            }
+
+          }
+
+          if ($parkingType == "OUT"){
+            $insertFO = $this->manager->exec('INSERT INTO feeoutside (idRequest, groundArea, weekNumber, idTariffOutside) VALUES (?,?,?,?)', [
+              $idRequest,
+              $groundArea,
+              $weekNumber,
+              $idTariffOutside
+            ]);
+            if($insertFO == 0) {
+              $error->append("ErreurInsertFeeOutside");
+              return $error;
+            } else {
+
+            }
+
+          }
+
+        }
+        //fin parking
+
+
+
+        if ($cleaning){
+
+          $priceCleaning = $this->getPriceService(4);
+
+          $priceCleaningHT = $priceCleaning[0]['priceHT'];
+          $priceCleaningTTC = $priceCleaning[0]['priceTTC'];
+          $amount += $priceCleaningTTC;
+
+
+          $insertLRC = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
+            $idRequest,
+            4,
+            $priceCleaningHT,
+            $priceCleaningTTC
+          ]);
+          if($insertLRC == 0) {
+            $error->append("ErreurInsertLineRequestCleaning");
+            return $error;
+          } else {
+
+          }
+        }
+
+        if ($weather){
+
+          $priceWeather = $this->getPriceService(5);
+
+          $priceWeatherHT = $priceWeather[0]['priceHT'];
+          $priceWeatherTTC = $priceWeather[0]['priceTTC'];
+          $amount += $priceWeatherTTC;
+
+          $insertLRW = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
+            $idRequest,
+            5,
+            $priceWeatherHT,
+            $priceWeatherTTC
+          ]);
+          if($insertLRW == 0) {
+            $error->append("ErreurInsertLineRequestWeather");
+            return $error;
+          } else {
+            // passage des infos pour le paiement
+            session_start();
+            $_SESSION['amount'] = $amount;
+            $_SESSION['idRequest'] = $idRequest;
+
+            return "ok";
+          }
         }
 
       }
-      //fin parking
-
-
-
-      if ($cleaning){
-
-        $priceCleaning = $this->getPriceService(4);
-
-        $priceCleaningHT = $priceCleaning[0]['priceHT'];
-        $priceCleaningTTC = $priceCleaning[0]['priceTTC'];
-
-        $insertLRC = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
-          $idRequest,
-          4,
-          $priceCleaningHT,
-          $priceCleaningTTC
-        ]);
-        if($insertLRC == 0) {
-          $error->append("ErreurInsertLineRequestCleaning");
-          return $error;
-        } else {
-
-        }
+      else {
+        return $error;
       }
 
-      if ($weather){
-
-        $priceWeather = $this->getPriceService(5);
-
-        $priceWeatherHT = $priceWeather[0]['priceHT'];
-        $priceWeatherTTC = $priceWeather[0]['priceTTC'];
-
-        $insertLRW = $this->manager->exec('INSERT INTO linerequest (idRequest, idService, priceHT, priceTTC) VALUES (?,?,?,?)', [
-          $idRequest,
-          5,
-          $priceWeatherHT,
-          $priceWeatherTTC
-        ]);
-        if($insertLRW == 0) {
-          $error->append("ErreurInsertLineRequestWeather");
-          return $error;
-        } else {
-          return "ok";
-
-        }
-      }
 
     }
 

@@ -29,12 +29,14 @@ class RegisterCustomerManager{
 
         $error = new ArrayObject();
 
-        if (!ctype_alpha($lastName)){
-            $error->append("lastNameError");
-
         if (!ctype_alpha($firstName)){
             $error->append("firstNameError");
         }
+
+        if (!ctype_alpha($lastName)){
+            $error->append("lastNameError");
+        }
+
         if ($this->ifExist($email)){
             $error->append("emailExist");
         }
@@ -51,9 +53,6 @@ class RegisterCustomerManager{
             $error->append("confirmPasswordError");
         }
 
-
-
-        }
         if (count($error) == 0) {
           $passwordSha = hash('sha256', $password);
 
@@ -62,7 +61,6 @@ class RegisterCustomerManager{
           $error->append($email);
           $error->append($login);
           $error->append($password);
-
 
           $this->manager->exec('INSERT INTO user (lastName, firstName, email, login, password, type) VALUES (?,?,?,?,?,?)',[
             $lastName,
@@ -79,10 +77,8 @@ class RegisterCustomerManager{
               $country,
               $newId
           ]);
-
             return "ok";
         }
-
     }
 
     public function getRandomStr($n) {

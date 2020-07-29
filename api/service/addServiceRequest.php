@@ -28,7 +28,7 @@ require_once  __DIR__ . '/../manager/AccountManager.php';
 
 // echo $json['acousticGroup'];
 
-
+$error = new ArrayObject();
 
  session_start();
 
@@ -44,7 +44,7 @@ else{
     die();
 }
 // verifier si au moins 1 service coché
-// if (isset($json['landing'])){
+ if (isset($idCustomer) && isset($json['serviceDate']) && isset($json['basedChoice'])){
 
 
     $service = $serviceManager->addServiceRequest($idCustomer, $json['serviceDate'], $json['landing'], $json['planeTypeChoice'], $json['acousticGroup'], $json['basedChoice'], $json['dayweek'], $json['markupDuration'], $json['provisioning'], $json['petrole'],
@@ -58,8 +58,10 @@ else{
     echo json_encode($service);
     die();
     }
-// }
-
-http_response_code(400);
-echo "empty";
-die();
+  }
+  else{
+    $error->append("requireService");
+    http_response_code(400);
+    echo json_encode($error);
+    die();
+}

@@ -1,4 +1,4 @@
-tariffType<?php
+<?php
 require_once __DIR__ . '/../api/DataBaseManager.php';
 require_once __DIR__ . '/../api/manager/ServiceManager.php';
 
@@ -564,6 +564,8 @@ $(function(){
          console.log(data1);
 
         console.log( JSON.stringify(data1));
+        window.location.replace("paymentService.php");
+
       },
      error: function(xhr, status, error){
         // console.log(JSON.parse(data1));

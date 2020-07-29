@@ -8,10 +8,13 @@ header("Access-Control-Allow-Origin: *");
 
 // Verifier si une ligne est cochee
 if(isset($_POST["memberChecked"])){
-  $idMember = $_POST["memberChecked"]
+  $idMember = $_POST["memberChecked"];
   $manager = new DatabaseManager();
   $registerMember = new RegisterMemberManager($manager);
   $account = $registerMember->deleteMember($idMember);
+}
+else {
+  header("Location: ../../html/accountAdmin.php");
 }
 
 if($account == "ok"){

@@ -51,25 +51,25 @@
 					<form class="form-area contact-form text-right" id="myForm" >
 						<div class="row">
 							<div class="col-lg-6 form-group">
-
+                <div style="display: none; color: #f55;" id="requiredfields"></div>
+                <div style="display: none; color: #f55;" id="lastNameError"></div>
 								<input name="lastName" placeholder="Nom" id="lastName" class="common-input mb-20 form-control" required="" type="text">
+                <div style="display: none; color: #f55;" id="firstNameError"></div>
                 <input name="firstName" placeholder="Prénom" id="firstName" class="common-input mb-20 form-control" required="" type="text">
-
+                <div style="display: none; color: #f55;" id="emailError"></div><div style="display: none; color: #f55;" id="emailExist"></div>
                 <input name="email" placeholder="Adresse mail" id="email" class="common-input mb-20 form-control" required="" type="email">
-
                 <div >
                   <select type="text" class="common-input mb-20 form-control" name="country" id="countryList">
                     <option value="">Votre pays</option>
                   </select>
                 </div>
                 <input name="login" placeholder="Nom d'utilisateur" id="login" class="common-input mb-20 form-control" required="" type="text">
-
+                <p>Le mot de passe doit contenir 6 caractères dont une minuscule, une majuscule et 1 chiffre</p>
+                <div style="display: none; color: #f55;" id="passwordError"></div>
                 <input name="password" placeholder="Mot de passe" id="password" class="common-input mb-20 form-control" required="" type="password">
-
+                <div style="display: none; color: #f55;" id="confirmPassError"></div>
                 <input name="confirmPassword" placeholder="Confirmation de mot de passe" id="confirmPassword" class="common-input mb-20 form-control" required="" type="password">
-
 							</div>
-
 							<div class="col-lg-12">
 								<button class="genric-btn primary" id="submit" style="float: right;">M'inscrire</button>
 							</div>
@@ -80,7 +80,6 @@
 		</div>
 	</section>
 	<footer>
-
 	</footer>
 
 	<script src="../jquery/jquery-3.2.1.min.js"></script>
@@ -88,7 +87,6 @@
 	 crossorigin="anonymous"></script>
 	<script src="../js/vendor/bootstrap.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
-
 	<script src="../js/easing.min.js"></script>
 	<script src="../js/hoverIntent.js"></script>
 	<script src="../js/superfish.min.js"></script>
@@ -97,13 +95,9 @@
 	<script src="../js/jquery.tabs.min.js"></script>
 	<script src="../js/jquery.nice-select.min.js"></script>
 	<script src="../js/owl.carousel.min.js"></script>
-<!-- 	<script src="../js/mail-script.js"></script>
- -->	<script src="../js/main.js"></script>
-
- <script src="../js/isCo.js">
-
- </script>
-
+  <!-- <script src="../js/mail-script.js"></script> -->
+  <script src="../js/main.js"></script>
+  <script src="../js/isCo.js"></script>
 	<script type="text/javascript">
 
   $(function(){
@@ -111,9 +105,6 @@
     // Ecoute de la soumission du formulaire
     $(document).on('click','#submit' ,function(event){
       event.preventDefault();
-
-      alert('test de click du bouton');
-      //var lastName = $('#lastName').val();
 
       var data1 = {
 				lastName: $('#lastName').val(),
@@ -131,102 +122,77 @@
         dataType: 'text',
         method: "POST",
         data : {data: JSON.stringify(data1)},
-        // data : {
-        //   lastName : lastName
-        // }
 
         success: function(data, status, xhr){
           console.log(data);
-
        //   console.log( JSON.stringify(data1));
          window.location.replace("index.html");
         },
        error: function(xhr, status, error){
-         //console.log(error);
-       //      ;
-       //  if(xhr.status != 200){
-         //  if(xhr.status == 402){
            console.log(xhr.responseText);
            showError(JSON.parse(xhr.responseText));
-       //			}
        }
       })
     })
   })
+
+  function showError(error){
+    for(let i = 0; i < Object.keys(error).length; i++){
+      switch(error[i]){
+      case 'requiredfields':
+        document.getElementById("requiredfields").style.display = "flex";
+        $('#requiredfields').text('Veuillez remplir tous les champs.').show();
+        break;
+      case 'firstNameError':
+        document.getElementById("firstNameError").style.display = "flex";
+        $('#firstNameError').text('Prénom invalide.').show();
+        break;
+      case 'lastNameError':
+        document.getElementById("lastNameError").style.display = "flex";
+        $('#lastNameError').text('Nom invalide.').show();
+        break;
+      case 'emailError':
+        document.getElementById("emailError").style.display = "flex";
+        $('#emailError').text('Adresse mail invalide.').show();
+        break;
+      case 'emailExist':
+        document.getElementById("emailExist").style.display = "flex";
+        $('#emailExist').text('Adresse mail déjà utilisée.').show();
+        break;
+      case 'passwordError':
+        document.getElementById("passwordError").style.display = "flex";
+        $('#passwordError').text('Mot de passe invalide.').show();
+        break;
+      case 'confirmPasswordError':
+        document.getElementById("confirmPasswordError").style.display = "flex";
+        $('#confirmPasswordError').text('Le mot de passe de confirmation ne correspond pas au mot de passe saisi.').show();
+        break;
+      }
+    }
+  }
+
   window.onload = function() {
 
-
-              var option = {
-                url: '../api/register/getCountry.php',
-                  dataType: "text",
-                  type: "POST",
-                  data: {},
-                  success: function(data, status, xhr){
-                      let country = JSON.parse(xhr.responseText);
-                      let optionElement;
-                      for ( let i = 0; i < country.length; i++){
-                          optionElement = document.createElement("option");
-                          optionElement.setAttribute( "value", country[i]['idCountry']);
-                          optionElement.innerHTML = country[i]['nameFr'];
-                  //        console.log(country[i]['jobs']);
-                          $('#countryList').append(optionElement);
-                      //    console.log(country);
-                        //  console.log(country[i]['nameFr']);
-
-                      }
-                  },
-                  error: function( xhr, status, error ){
-
-                  }
-              };
-              $.ajax(option);
-          };
-
-
-    //
-		// function validateRegistration(){
-    //
-    //   alert('test');
-    //
-    // var lastName = $('#lastName').val();
-    //
-		// 	var data1 = {
-		// 		//lastName: $('#lastName').val(),
-    //     firstName: $('#firstName').val(),
-    //     email: $('#email').val(),
-    //     country: $('#countryList').val(),
-    //     login: $('#login').val(),
-    //     password: $('#password').val(),
-    //     confirmPassword: $('#confirmPassword').val()
-		// 	};
-    //
-    //
-		// }
-
-		function showError(error){
-    	for(let i = 0; i < Object.keys(error).length; i++){
-    		switch(error[i]){
-    			case 'firstNameError':
-    				$('#firstNameError').show();
-					break;
-				case 'lastNameError':
-					$('#lastNameError').show();
-					break;
-				case 'emailError':
-					$('#emailError').show();
-					break;
-				case 'emailExist':
-					$('#emailExist').show();
-					break;
-			  case 'passwordError':
-					$('#passwordError').show();
-					break;
-				case 'confirmPasswordError':
-					$('#confirmPassError').show();
-					break;
-			}
-		}
-	}
+    var option = {
+      url: '../api/register/getCountry.php',
+        dataType: "text",
+        type: "POST",
+        data: {},
+        success: function(data, status, xhr){
+            let country = JSON.parse(xhr.responseText);
+            let optionElement;
+            for ( let i = 0; i < country.length; i++){
+                optionElement = document.createElement("option");
+                optionElement.setAttribute( "value", country[i]['idCountry']);
+                optionElement.innerHTML = country[i]['nameFr'];
+                $('#countryList').append(optionElement);
+            }
+        },
+        error: function( xhr, status, error ){
+        }
+    };
+    $.ajax(option);
+  };
 
 	</script>
 
